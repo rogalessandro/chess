@@ -1,6 +1,10 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
+
+import chess.KingMovesCalculator;
 
 /**
  * Represents a single chess piece
@@ -10,8 +14,15 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
+    private ChessGame.TeamColor pieceColor;
+    private ChessPiece.PieceType type;
+
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
+
+
 
     /**
      * The various different chess piece options
@@ -29,14 +40,42 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
+    }
+
+
+
+    public PieceMovesCalculator giveType(){
+
+        switch (type){
+            case KING:
+                return new KingMovesCalculator();
+            case QUEEN:
+                return new QueenMovesCalculator();
+            case BISHOP:
+                return new BishopMovesCalculator();
+            case KNIGHT:
+                return new KnightMovesCalculator();
+            case ROOK:
+                return new RookMovesCalculator();
+            case PAWN:
+                return new PawnMovesCalculator();
+            default:
+                try {
+
+                    throw new InvalidMoveException("Can't find that piece");
+                } catch (InvalidMoveException e) {
+                    throw new RuntimeException(e);
+                }
+
+        }
     }
 
     /**
@@ -47,6 +86,21 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return giveType().pieceMoves(board, myPosition, pieceColor);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 }
