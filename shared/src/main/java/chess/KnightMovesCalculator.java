@@ -25,12 +25,12 @@ public class KnightMovesCalculator implements PieceMovesCalculator{
 
         for (int[] direccion : direccionesPosibles) {
 
-            int newRow = position.getRow() + direccion[0];
-            int newCol = position.getColumn() + direccion[1];
+            int nuevaRow = position.getRow() + direccion[0];
+            int nuevaCol = position.getColumn() + direccion[1];
 
 
-            if (limiteTablero(newRow, newCol)) {
-                ChessPosition nuevaPosition = new ChessPosition(newRow, newCol);
+            if (limiteTablero(nuevaRow, nuevaCol)) {
+                ChessPosition nuevaPosition = new ChessPosition(nuevaRow, nuevaCol);
                 positionTO = board.getPiece(nuevaPosition);
 
 

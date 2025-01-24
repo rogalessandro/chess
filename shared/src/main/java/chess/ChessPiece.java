@@ -70,7 +70,7 @@ public class ChessPiece {
             default:
                 try {
 
-                    throw new InvalidMoveException("Can't find that piece");
+                    throw new InvalidMoveException("Esa pieza no existe xd");
                 } catch (InvalidMoveException e) {
                     throw new RuntimeException(e);
                 }

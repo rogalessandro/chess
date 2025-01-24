@@ -132,7 +132,7 @@ public class ChessBoard {
     }
 
     private boolean limiteTablero(int row, int col) {
-        return row < 0 || row >= 8 || col < 0 || col >= 8; // True si esta fuera de los limites
+        return row < 0 || row >= 8 || col < 0 || col >= 8; // Verdadero si esta fuera de los limites
 
 
     }

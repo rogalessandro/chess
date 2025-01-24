@@ -29,14 +29,14 @@ public class QueenMovesCalculator implements PieceMovesCalculator{
             int ciclo = 1;
 
             while(true){
-                int newRow = position.getRow() + direccion[0] * ciclo;
-                int newCol = position.getColumn() + direccion[1] * ciclo;
+                int nuevaRow = position.getRow() + direccion[0] * ciclo;
+                int nuevaCol = position.getColumn() + direccion[1] * ciclo;
 
-                if (!limiteTablero(newRow, newCol)){
+                if (!limiteTablero(nuevaRow, nuevaCol)){
                     break;
                 }
 
-                ChessPosition nuevaPosition = new ChessPosition(newRow, newCol);
+                ChessPosition nuevaPosition = new ChessPosition(nuevaRow, nuevaCol);
                 positionTO = board.getPiece(nuevaPosition);
 
                 if (positionTO == null){
