@@ -1,17 +1,12 @@
 package chess;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import chess.ChessPosition;
-
 public class KnightMovesCalculator implements PieceMovesCalculator{
-
-
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position, ChessGame.TeamColor teamColor) {
         Collection<ChessMove> moves = new ArrayList<>();
         ChessPiece positionTO;
-
         int[][] direccionesPosibles = {
                 {1, -2},
                 {-1, -2},

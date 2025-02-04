@@ -22,8 +22,6 @@ public class ChessPiece {
         this.type = type;
     }
 
-
-
     /**
      * The various different chess piece options
      */
@@ -49,7 +47,6 @@ public class ChessPiece {
     public PieceType getPieceType() {
         return type;
     }
-
 
 
     public PieceMovesCalculator giveType(){

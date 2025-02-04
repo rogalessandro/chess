@@ -1,14 +1,10 @@
 package chess;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import chess.ChessPosition;
-
 public class KingMovesCalculator implements PieceMovesCalculator{
-
     public KingMovesCalculator() {
     }
-
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position, ChessGame.TeamColor teamColor) {
         Collection<ChessMove> moves = new ArrayList<>();

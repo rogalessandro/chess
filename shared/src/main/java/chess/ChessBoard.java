@@ -26,20 +26,6 @@ public class ChessBoard {
     public void addPiece(ChessPosition position, ChessPiece piece) {
         squares[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Gets a chess piece on the chessboard
      *
@@ -50,23 +36,6 @@ public class ChessBoard {
     public ChessPiece getPiece(ChessPosition position) {
         return squares[position.getRow() - 1][position.getColumn() - 1];
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
@@ -136,7 +105,6 @@ public class ChessBoard {
 
 
     }
-
 
     @Override
     public boolean equals(Object o) {

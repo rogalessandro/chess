@@ -50,18 +50,6 @@ public class ChessMove {
         this.promotionPiece = promotionPiece;
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) {
