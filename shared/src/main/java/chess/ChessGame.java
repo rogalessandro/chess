@@ -54,11 +54,41 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessPiece pieza = tablero.getPiece(startPosition);
-        Collection<ChessMove> valids = pieza.pieceMoves(tablero, startPosition);
 
 
-        return valids;
+
+        ChessPiece piece = tablero.getPiece(startPosition);
+
+
+        if(piece == null){
+            return new ArrayList<>();
+        }
+
+        Collection<ChessMove> pieceMoves = piece.pieceMoves(tablero, startPosition);
+        Collection<ChessMove> validMoves = new ArrayList<>();
+
+        for(ChessMove move : pieceMoves){
+
+            ChessPiece piezaAtacada = tablero.getPiece(move.getEndPosition());
+
+            tablero.addPiece(move.getEndPosition(), piece);
+            tablero.addPiece(move.getStartPosition(), null);
+
+            boolean isCheck = isInCheck(piece.getTeamColor());
+
+            tablero.addPiece(move.getStartPosition(),piece);
+            tablero.addPiece(move.getEndPosition(), piezaAtacada);
+
+
+            if(!isCheck){
+                validMoves.add(move);
+            }
+
+        }
+
+
+
+        return validMoves;
 
 
     }
@@ -72,21 +102,21 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         ChessPiece piece = tablero.getPiece(move.getStartPosition());
 
-        if(piece == null){
-            throw new InvalidMoveException("Nothing there");
-        }
-
-        if(piezaTurno != piece.getTeamColor()){
-            throw new InvalidMoveException("Not your turn");
-        }
-
         if(isInCheck(piezaTurno)){
             throw new InvalidMoveException("In check");
+        }
+
+        if(piece == null){
+            throw new InvalidMoveException("Nothing there");
         }
 
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if(!validMoves.contains(move)){
             throw new InvalidMoveException("No valid move");
+        }
+
+        if(piezaTurno != piece.getTeamColor()){
+            throw new InvalidMoveException("Not your turn");
         }
 
         tablero.addPiece(move.getEndPosition(), piece);
@@ -126,12 +156,10 @@ public class ChessGame {
 
                 if(piece != null && piece.getTeamColor() != teamColor){
                     Collection<ChessMove> moves = piece.pieceMoves(tablero, pieceLoc);
-
-
                     if(piece.getPieceType() == ChessPiece.PieceType.PAWN){
 
                         int direction;
-                        if (teamColor == ChessGame.TeamColor.WHITE) {
+                        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
                             direction = 1;
                         } else {
                             direction = -1;
@@ -148,9 +176,6 @@ public class ChessGame {
                                 }
                             }
                         }
-
-
-
                     }else{
                         for(ChessMove move : moves){
                             if(move.getEndPosition().equals(kingLocation)){
@@ -158,14 +183,9 @@ public class ChessGame {
                             }
                         }
                     }
-
-
                 }
-
-
             }
         }
-
         return false;
     }
 
@@ -196,66 +216,49 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        ChessPosition kingLocation = findKingLocation(teamColor);
-        ChessPiece king = tablero.getPiece(kingLocation);
-        Collection<ChessMove> kingMoves = king.pieceMoves(tablero, kingLocation);
 
-
-        Collection<ChessPosition> allEndPositions = new ArrayList<>();
-
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
 
 
         for(int i = 1; i < 9; i++){
             for(int j = 1; j < 9; j++){
+
                 ChessPosition pieceLoc = new ChessPosition(i,j);
                 ChessPiece piece = tablero.getPiece(pieceLoc);
 
-                if(piece != null && piece.getTeamColor() != teamColor){
+                if(piece != null && piece.getTeamColor() == piezaTurno){
                     Collection<ChessMove> moves = piece.pieceMoves(tablero, pieceLoc);
+
+
                     for(ChessMove move : moves){
-                        allEndPositions.add(move.getEndPosition());
+
+                        ChessPiece piezaAtacada = tablero.getPiece(move.getEndPosition());
+
+                        tablero.addPiece(move.getEndPosition(), piece);
+                        tablero.addPiece(move.getStartPosition(), null);
+
+                        boolean isCheck = isInCheck(teamColor);
+
+                        tablero.addPiece(pieceLoc,piece);
+                        tablero.addPiece(move.getEndPosition(), piezaAtacada);
+
+
+                        if(!isCheck){return false;}
 
                     }
-                }
-
-                if(piece.getPieceType() == ChessPiece.PieceType.PAWN){
-                    Collection<ChessMove> pawnMoves = piece.pieceMoves(tablero, pieceLoc);
-                    ChessBoard tableroTemporal = new ChessBoard();
-
 
 
                 }
-
-
-
-
             }
         }
 
 
-
-
-
-
-
-        int size = kingMoves.size();
-        int total = 0;
-
-        for(ChessMove move : kingMoves){
-            if(allEndPositions.contains(move.getEndPosition())){
-                total++;
-            }
-        }
-
-
-
-        if(total == size){
-            return true;
-        }
-
-
-        return false;
+        return true;
     }
+
+
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having
@@ -265,7 +268,46 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+
+
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+
+
+        for(int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+
+                ChessPosition pieceLoc = new ChessPosition(i, j);
+                ChessPiece piece = tablero.getPiece(pieceLoc);
+
+                if (piece != null && piece.getTeamColor() == piezaTurno) {
+                    Collection<ChessMove> moves = piece.pieceMoves(tablero, pieceLoc);
+
+                    for(ChessMove move: moves){
+
+                        ChessPiece piezaAtacada = tablero.getPiece(move.getEndPosition());
+
+                        tablero.addPiece(move.getEndPosition(), piece);
+                        tablero.addPiece(move.getStartPosition(), null);
+
+                        boolean isCheck = isInCheck(teamColor);
+
+                        tablero.addPiece(pieceLoc,piece);
+                        tablero.addPiece(move.getEndPosition(), piezaAtacada);
+
+
+                        if(!isCheck){return false;}
+
+
+                    }
+
+                }
+            }
+        }
+
+
+        return true;
     }
 
     /**
@@ -284,6 +326,12 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return tablero;
+    }
+
+
+
+    private boolean limiteTablero(int row, int col){
+        return row > 0 && row <= 8 && col > 0 && col <= 8;
     }
 
 
