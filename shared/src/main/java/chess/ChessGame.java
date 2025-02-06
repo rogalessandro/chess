@@ -217,6 +217,18 @@ public class ChessGame {
 
                     }
                 }
+
+                if(piece.getPieceType() == ChessPiece.PieceType.PAWN){
+                    Collection<ChessMove> pawnMoves = piece.pieceMoves(tablero, pieceLoc);
+                    ChessBoard tableroTemporal = new ChessBoard();
+
+
+
+                }
+
+
+
+
             }
         }
 
