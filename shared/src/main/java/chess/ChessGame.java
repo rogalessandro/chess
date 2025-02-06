@@ -16,6 +16,7 @@ public class ChessGame {
 
     public ChessGame() {
         this.tablero = new ChessBoard();
+        tablero.resetBoard();
         this.piezaTurno = TeamColor.WHITE;
     }
 
@@ -51,7 +52,13 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece pieza = tablero.getPiece(startPosition);
+        Collection<ChessMove> valids = pieza.pieceMoves(tablero, startPosition);
+
+
+        return valids;
+
+
     }
 
     /**
@@ -61,7 +68,39 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = tablero.getPiece(move.getStartPosition());
+
+        if(piece == null){
+            throw new InvalidMoveException("Nothing there");
+        }
+
+        if(piezaTurno != piece.getTeamColor()){
+            throw new InvalidMoveException("Not your turn");
+        }
+
+        Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
+        if(!validMoves.contains(move)){
+            throw new InvalidMoveException("No valid move");
+        }
+
+        tablero.addPiece(move.getEndPosition(), piece);
+        tablero.addPiece(move.getStartPosition(), null);
+
+        if(move.getPromotionPiece() != null){
+            ChessPiece promo = new ChessPiece(piezaTurno, move.getPromotionPiece());
+            tablero.addPiece(move.getEndPosition(), promo);
+        }
+
+
+        if(piezaTurno == TeamColor.WHITE){
+            piezaTurno = TeamColor.BLACK;
+        }else{
+            piezaTurno = TeamColor.WHITE;
+        }
+
+
+
+
     }
 
     /**
@@ -73,6 +112,25 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         throw new RuntimeException("Not implemented");
     }
+
+
+    public ChessPosition findKingLocation(){
+
+        for(int i = 0; i < 8; i++){
+            for(int j = 0; j < 8; j++){
+                ChessPosition pieceLoc = new ChessPosition(i,j);
+                ChessPiece piece = tablero.getPiece(pieceLoc);
+
+                if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == piezaTurno){
+
+                }
+            }
+        }
+
+        return new ChessPosition(0,0);
+    }
+
+
 
     /**
      * Determines if the given team is in checkmate
@@ -101,7 +159,7 @@ public class ChessGame {
      * @param board the new board to use
      */
     public void setBoard(ChessBoard board) {
-        this.tablero.resetBoard();
+        this.tablero = board;
     }
 
     /**
@@ -110,6 +168,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return tablero;
     }
 }
