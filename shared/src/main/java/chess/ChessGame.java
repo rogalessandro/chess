@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * For a class that can manage a chess game, making moves on a board
@@ -78,6 +80,10 @@ public class ChessGame {
             throw new InvalidMoveException("Not your turn");
         }
 
+        if(isInCheck(piezaTurno)){
+            throw new InvalidMoveException("In check");
+        }
+
         Collection<ChessMove> validMoves = validMoves(move.getStartPosition());
         if(!validMoves.contains(move)){
             throw new InvalidMoveException("No valid move");
@@ -110,24 +116,75 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
-    }
+        ChessPosition kingLocation = findKingLocation(teamColor);
 
-
-    public ChessPosition findKingLocation(){
-
-        for(int i = 0; i < 8; i++){
-            for(int j = 0; j < 8; j++){
+        for(int i = 1; i < 9; i++){
+            for(int j = 1; j < 9; j++){
                 ChessPosition pieceLoc = new ChessPosition(i,j);
                 ChessPiece piece = tablero.getPiece(pieceLoc);
 
-                if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == piezaTurno){
+
+                if(piece != null && piece.getTeamColor() != teamColor){
+                    Collection<ChessMove> moves = piece.pieceMoves(tablero, pieceLoc);
+
+
+                    if(piece.getPieceType() == ChessPiece.PieceType.PAWN){
+
+                        int direction;
+                        if (teamColor == ChessGame.TeamColor.WHITE) {
+                            direction = 1;
+                        } else {
+                            direction = -1;
+                        }
+
+                        if((pieceLoc.getRow() + direction == kingLocation.getRow())){
+                            if(pieceLoc.getColumn() > kingLocation.getColumn()){
+                                if((pieceLoc.getColumn() - kingLocation.getColumn()) == 1){
+                                    return true;
+                                }
+                            }else{
+                                if((kingLocation.getColumn() - pieceLoc.getColumn()) == 1){
+                                    return true;
+                                }
+                            }
+                        }
+
+
+
+                    }else{
+                        for(ChessMove move : moves){
+                            if(move.getEndPosition().equals(kingLocation)){
+                                return true;
+                            }
+                        }
+                    }
+
 
                 }
+
+
             }
         }
 
-        return new ChessPosition(0,0);
+        return false;
+    }
+
+
+    public ChessPosition findKingLocation(TeamColor teamColor) {
+
+        for(int i = 1; i < 9; i++){
+            for(int j = 1; j < 9; j++){
+                ChessPosition pieceLoc = new ChessPosition(i,j);
+                ChessPiece piece = tablero.getPiece(pieceLoc);
+                if(piece != null){
+                    if(piece.getPieceType() == ChessPiece.PieceType.KING && piece.getTeamColor() == teamColor){
+                        return pieceLoc;
+                    }
+                }
+
+            }
+        }
+        return null;
     }
 
 
@@ -139,7 +196,53 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessPosition kingLocation = findKingLocation(teamColor);
+        ChessPiece king = tablero.getPiece(kingLocation);
+        Collection<ChessMove> kingMoves = king.pieceMoves(tablero, kingLocation);
+
+
+        Collection<ChessPosition> allEndPositions = new ArrayList<>();
+
+
+
+        for(int i = 1; i < 9; i++){
+            for(int j = 1; j < 9; j++){
+                ChessPosition pieceLoc = new ChessPosition(i,j);
+                ChessPiece piece = tablero.getPiece(pieceLoc);
+
+                if(piece != null && piece.getTeamColor() != teamColor){
+                    Collection<ChessMove> moves = piece.pieceMoves(tablero, pieceLoc);
+                    for(ChessMove move : moves){
+                        allEndPositions.add(move.getEndPosition());
+
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
+
+        int size = kingMoves.size();
+        int total = 0;
+
+        for(ChessMove move : kingMoves){
+            if(allEndPositions.contains(move.getEndPosition())){
+                total++;
+            }
+        }
+
+
+
+        if(total == size){
+            return true;
+        }
+
+
+        return false;
     }
 
     /**
@@ -169,5 +272,20 @@ public class ChessGame {
      */
     public ChessBoard getBoard() {
         return tablero;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return piezaTurno == chessGame.piezaTurno && Objects.equals(tablero, chessGame.tablero);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(piezaTurno, tablero);
     }
 }
