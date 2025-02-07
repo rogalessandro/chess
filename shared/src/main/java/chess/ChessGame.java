@@ -16,6 +16,8 @@ public class ChessGame {
     private ChessBoard tablero;
 
 
+
+
     public ChessGame() {
         this.tablero = new ChessBoard();
         tablero.resetBoard();
