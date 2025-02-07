@@ -335,17 +335,4 @@ public class ChessGame {
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        ChessGame chessGame = (ChessGame) o;
-        return piezaTurno == chessGame.piezaTurno && Objects.equals(tablero, chessGame.tablero);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(piezaTurno, tablero);
-    }
 }
