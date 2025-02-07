@@ -334,5 +334,17 @@ public class ChessGame {
         return row > 0 && row <= 8 && col > 0 && col <= 8;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessGame chessGame = (ChessGame) o;
+        return piezaTurno == chessGame.piezaTurno && Objects.equals(tablero, chessGame.tablero);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(piezaTurno, tablero);
+    }
 }
