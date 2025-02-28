@@ -15,8 +15,6 @@ public class Server {
 
         Spark.delete("/db", new ClearHandler());
 
-
-
         Spark.awaitInitialization();
         return Spark.port();
     }
