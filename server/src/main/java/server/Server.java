@@ -2,6 +2,8 @@ package server;
 
 
 import server.handlers.ClearHandler;
+import service.ClearService;
+import dataaccess.DataAccessObject;
 import spark.*;
 
 public class Server {
@@ -10,6 +12,11 @@ public class Server {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+
+        //DOA instances
+        DataAccessObject dao = new DataAccessObject();
+
 
         // Register your endpoints and handle exceptions here.
 
