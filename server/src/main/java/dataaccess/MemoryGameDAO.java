@@ -1,33 +1,36 @@
 package dataaccess;
 
 import model.GameData;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MemoryGameDAO implements GameDAO {
+    private final Map<String, GameData> games = new HashMap<>();
 
 
-    @Override
-    public void insertGame(GameData game) throws DataAccessException {
-
+    public void insertGame(GameData game) {
+        games.put(game.gameID(), game);
     }
 
-    @Override
-    public GameData getGame(String gameID) throws DataAccessException {
-        return null;
+
+    public GameData getGame(String gameID)  {
+        return games.get(gameID);
     }
 
-    @Override
-    public void updateGame(String gameID, GameData updateGame) throws DataAccessException {
 
+    public void updateGame(String gameID, GameData updateGame)   {
+        games.put(gameID, updateGame);
     }
 
-    @Override
-    public void listGame() throws DataAccessException {
 
+    public void listGame()  {
+        for (GameData game : games.values()) {
+            System.out.println(game);
+        }
     }
 
-    @Override
+
     public void clear() {
-
+        games.clear();
     }
 }
-

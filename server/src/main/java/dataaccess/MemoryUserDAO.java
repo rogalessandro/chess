@@ -1,25 +1,29 @@
 package dataaccess;
 
 import model.UserData;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MemoryUserDAO implements UserDAO {
-    @Override
-    public void insertUser(UserData user) throws DataAccessException {
+    private final HashMap<String, UserData> users = new HashMap<>();
 
+
+    public void insertUser(UserData user) {
+        users.put(user.username(), user);
     }
 
-    @Override
-    public UserData getUser(String username) throws DataAccessException {
-        return null;
+
+    public UserData getUser(String username) {
+        return users.get(username);
     }
 
-    @Override
-    public void deleteUser(UserData user) throws DataAccessException {
 
+    public void deleteUser(UserData user) {
+        users.remove(user.username());
     }
 
-    @Override
+
     public void clear() {
-
+        users.clear();
     }
 }

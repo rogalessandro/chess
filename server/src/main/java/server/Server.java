@@ -3,7 +3,9 @@ package server;
 
 import server.handlers.ClearHandler;
 import service.ClearService;
-import dataaccess.DataAccessObject;
+import dataaccess.MemoryUserDAO;
+import dataaccess.MemoryGameDAO;
+import dataaccess.MemoryAuthDAO;
 import spark.*;
 
 public class Server {
@@ -15,11 +17,13 @@ public class Server {
 
 
         //DOA instances
-        DataAccessObject dao = new DataAccessObject();
+        MemoryUserDAO userDAO = new MemoryUserDAO();
+        MemoryGameDAO gameDAO = new MemoryGameDAO();
+        MemoryAuthDAO authDAO = new MemoryAuthDAO();
 
         //Service using the shared DAO
 
-        ClearService clearService = new ClearService(dao);
+        ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
 
         // Register your endpoints and handle exceptions here.
 
