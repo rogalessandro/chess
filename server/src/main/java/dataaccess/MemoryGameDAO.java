@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MemoryGameDAO implements GameDAO {
-    private final Map<String, GameData> games = new HashMap<>();
+    private final HashMap<Integer, GameData> games = new HashMap<>();
 
 
     public void insertGame(GameData game) {
@@ -13,12 +13,12 @@ public class MemoryGameDAO implements GameDAO {
     }
 
 
-    public GameData getGame(String gameID)  {
+    public GameData getGame(int gameID)  {
         return games.get(gameID);
     }
 
 
-    public void updateGame(String gameID, GameData updateGame)   {
+    public void updateGame(int gameID, GameData updateGame)   {
         games.put(gameID, updateGame);
     }
 
