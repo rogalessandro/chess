@@ -8,7 +8,10 @@ public class MemoryUserDAO implements UserDAO {
     private final HashMap<String, UserData> users = new HashMap<>();
 
 
-    public void insertUser(UserData user) {
+    public void insertUser(UserData user) throws DataAccessException{
+        if (users.containsKey(user.username())) {
+            throw new DataAccessException("Username exists");
+        }
         users.put(user.username(), user);
     }
 
