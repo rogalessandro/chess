@@ -11,5 +11,6 @@ public interface AuthDAO {
 
     void deleteAuth(AuthData authdata) throws DataAccessException;
 
+    void clear();
 
 }

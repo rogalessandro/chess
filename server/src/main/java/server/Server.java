@@ -1,11 +1,9 @@
 package server;
 
 
+import dataaccess.*;
 import server.handlers.ClearHandler;
 import service.ClearService;
-import dataaccess.MemoryUserDAO;
-import dataaccess.MemoryGameDAO;
-import dataaccess.MemoryAuthDAO;
 import spark.*;
 
 public class Server {
@@ -17,9 +15,9 @@ public class Server {
 
 
         //DOA instances
-        MemoryUserDAO userDAO = new MemoryUserDAO();
-        MemoryGameDAO gameDAO = new MemoryGameDAO();
-        MemoryAuthDAO authDAO = new MemoryAuthDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
 
         //Service using the shared DAO
 
