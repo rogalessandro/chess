@@ -9,7 +9,7 @@ public class MemoryAuthDAO implements AuthDAO {
 
 
     public void insertAuth(AuthData authdata) {
-        authTokens.put(authdata.getToken(), authdata);
+        authTokens.put(authdata.authToken(), authdata);
     }
 
 
@@ -19,7 +19,7 @@ public class MemoryAuthDAO implements AuthDAO {
 
 
     public void deleteAuth(AuthData authdata)   {
-        authTokens.remove(authdata.getToken());
+        authTokens.remove(authdata.authToken());
     }
 
 
