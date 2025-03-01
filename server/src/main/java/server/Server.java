@@ -17,10 +17,13 @@ public class Server {
         //DOA instances
         DataAccessObject dao = new DataAccessObject();
 
+        //Service using the shared DAO
+
+        ClearService clearService = new ClearService(dao);
 
         // Register your endpoints and handle exceptions here.
 
-        Spark.delete("/db", new ClearHandler());
+        Spark.delete("/db", new ClearHandler(clearService));
 
         Spark.awaitInitialization();
         return Spark.port();

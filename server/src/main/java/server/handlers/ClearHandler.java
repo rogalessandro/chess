@@ -1,30 +1,26 @@
 package server.handlers;
 
-import com.google.gson.Gson;
 import service.ClearService;
-import dataaccess.DataAccessException;
 import spark.Request;
 import spark.Response;
 import spark.Route;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class ClearHandler implements Route {
+    private final ClearService clearService;
+
+    public ClearHandler(ClearService clearService) {
+        this.clearService = clearService;
+    }
+
     @Override
     public Object handle(Request req, Response res) {
-        ClearService service = new ClearService();
-        Gson gson = new Gson();
-
         try {
-            service.clearDatabase();
+            clearService.clear();
             res.status(200);
-            return "{}";
-        } catch (DataAccessException e) {
+            return "Database cleared successfully";
+        } catch (Exception e) {
             res.status(500);
-            Map<String, String> error = new HashMap<>();
-            error.put("message", "Error: " + e.getMessage());
-            return gson.toJson(error);
+            return "Error clearing database: " + e.getMessage();
         }
     }
 }

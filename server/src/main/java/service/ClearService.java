@@ -5,11 +5,14 @@ import dataaccess.DataAccessObject;
 
 public class ClearService {
 
-    public void clearDatabase() throws DataAccessException {
+    private final DataAccessObject dao;
 
-        DataAccessObject dao = new DataAccessObject();
+    public ClearService(DataAccessObject dao) {
+        this.dao = dao;
+    }
+
+    public void clear() throws DataAccessException {
         dao.clear();
-
     }
 
 }
