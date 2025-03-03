@@ -3,6 +3,8 @@ package server;
 
 import dataaccess.*;
 import server.handlers.ClearHandler;
+import server.handlers.RegisterHandler;
+import service.UserService;
 import service.ClearService;
 import spark.*;
 
@@ -22,6 +24,7 @@ public class Server {
         //Service using the shared DAO
 
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
+        UserService userService = new UserService(userDAO);
 
         // Register your endpoints and handle exceptions here.
 

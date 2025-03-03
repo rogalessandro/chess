@@ -6,6 +6,8 @@ import spark.Response;
 import spark.Route;
 
 public class ClearHandler implements Route {
+
+    // No necesito gsno en el clear xd
     private final ClearService clearService;
 
     public ClearHandler(ClearService clearService) {
