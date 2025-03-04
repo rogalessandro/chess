@@ -1,17 +1,16 @@
 package server.handlers;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import dataaccess.UserAlreadyExistsException;
 import service.UserService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import dataaccess.DataAccessException;
-import model.UserData;
+
+import java.util.Map;
 
 public class RegisterHandler implements Route {
-
-
-    // primero en usar gson xdxd
     private final UserService userService;
     private final Gson gson = new Gson();
 
@@ -19,18 +18,44 @@ public class RegisterHandler implements Route {
         this.userService = userService;
     }
 
+
     public Object handle(Request req, Response res) {
         try {
-            UserData user = gson.fromJson(req.body(), UserData.class);
-            userService.registerUser(user.username(), user.password(), user.email());
+
+            Map<String, String> requestBody = gson.fromJson(req.body(), Map.class);
+
+
+            String username = requestBody.get("username");
+            String password = requestBody.get("password");
+            String email = requestBody.get("email");
+
+
+            if (username == null || password == null || email == null) {
+                res.status(400);
+                return gson.toJson(Map.of("message", "Error: no completo lo que necesitamos"));
+            }
+
+
+            String authToken = userService.registerUser(username, password, email);
 
             res.status(200);
-            return gson.toJson(user);
+            res.type("application/json");
+            return gson.toJson(Map.of("username", username, "authToken", authToken));
+
+
+
+        } catch (UserAlreadyExistsException e) {
+            res.status(403);
+            return gson.toJson(Map.of("message", "Error: " + e.getMessage()));
+
         } catch (DataAccessException e) {
             res.status(400);
-            return gson.toJson(new Message("Error: " + e.getMessage()));
+            return gson.toJson(Map.of("message", "Error: " + e.getMessage()));
+
+        } catch (Exception e) {
+            res.status(500);
+            return gson.toJson(Map.of("message", "Error: " + e.getMessage()));
+
         }
     }
-
-    private record Message(String message) {}
 }

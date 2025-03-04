@@ -4,6 +4,7 @@ import model.AuthData;
 import java.util.HashMap;
 import java.util.Map;
 
+
 public class MemoryAuthDAO implements AuthDAO {
     private final Map<String, AuthData> authTokens = new HashMap<>();
 
@@ -18,8 +19,11 @@ public class MemoryAuthDAO implements AuthDAO {
     }
 
 
-    public void deleteAuth(AuthData authdata)   {
-        authTokens.remove(authdata.authToken());
+    public void deleteAuth(String authToken) throws DataAccessException {
+        if (!authTokens.containsKey(authToken)) {
+            throw new DataAccessException("Invalid auth token");
+        }
+        authTokens.remove(authToken);
     }
 
 
