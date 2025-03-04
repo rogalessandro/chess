@@ -1,6 +1,6 @@
 package service;
 
-import dataaccess.*;
+import services.*;
 
 public class ClearService {
     private final UserDAO userDAO;

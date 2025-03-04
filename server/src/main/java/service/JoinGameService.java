@@ -1,9 +1,9 @@
 package service;
 
 import chess.ChessGame;
-import dataaccess.AuthDAO;
-import dataaccess.GameDAO;
-import dataaccess.DataAccessException;
+import services.AuthDAO;
+import services.GameDAO;
+import services.DataAccessException;
 import model.AuthData;
 import model.GameData;
 
@@ -21,22 +21,17 @@ public class JoinGameService {
             throw new DataAccessException("Missing auth token");
         }
 
-
-
         AuthData authData = authDAO.getAuth(authToken);
         if (authData == null) {
             System.err.println("Error: Unauthorized - Invalid token");
             throw new DataAccessException("Unauthorized - Invalid token");
         }
 
-
-
         GameData game = gameDAO.getGame(gameID);
         if (game == null) {
             System.err.println("Error: Game ID " + gameID + " does not exist");
             throw new DataAccessException("Error: Game does not exist");
         }
-
 
         try {
             gameDAO.joinGame(gameID, authData.username(), color);

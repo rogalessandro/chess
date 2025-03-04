@@ -5,12 +5,11 @@ import service.AuthService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import dataaccess.DataAccessException;
+import services.DataAccessException;
 import model.AuthData;
 import model.UserData;
 
 public class LoginHandler implements Route {
-
 
     private final AuthService authService;
     private final Gson gson = new Gson();
@@ -18,7 +17,6 @@ public class LoginHandler implements Route {
     public LoginHandler(AuthService authService) {
         this.authService = authService;
     }
-
 
     public Object handle(Request req, Response res) {
         try {

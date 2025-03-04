@@ -1,6 +1,5 @@
-package dataaccess;
+package services;
 
-import dataaccess.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -31,14 +30,11 @@ public class ClearServiceTest {
         int gameID = gameDAO.generateGameID();
         gameDAO.insertGame(new GameData(gameID, null, null, "juegoDePrueba", new chess.ChessGame()));
 
-
         assertNotNull(userDAO.getUser("testUsuarioDePrueba"));
         assertNotNull(authDAO.getAuth("authToken"));
         assertNotNull(gameDAO.getGame(gameID));
 
-
         clearService.clear();
-
 
         assertNull(userDAO.getUser("testUsuarioDePrueba"));
         assertNull(authDAO.getAuth("authToken"));

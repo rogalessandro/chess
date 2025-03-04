@@ -1,8 +1,8 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
-import dataaccess.UserAlreadyExistsException;
+import services.DataAccessException;
+import services.UserAlreadyExistsException;
 import service.UserService;
 import spark.Request;
 import spark.Response;
@@ -21,28 +21,22 @@ public class RegisterHandler implements Route {
 
     public Object handle(Request req, Response res) {
         try {
-
             Map<String, String> requestBody = gson.fromJson(req.body(), Map.class);
-
 
             String username = requestBody.get("username");
             String password = requestBody.get("password");
             String email = requestBody.get("email");
-
 
             if (username == null || password == null || email == null) {
                 res.status(400);
                 return gson.toJson(Map.of("message", "Error: no completo lo que necesitamos"));
             }
 
-
             String authToken = userService.registerUser(username, password, email);
 
             res.status(200);
             res.type("application/json");
             return gson.toJson(Map.of("username", username, "authToken", authToken));
-
-
 
         } catch (UserAlreadyExistsException e) {
             res.status(403);

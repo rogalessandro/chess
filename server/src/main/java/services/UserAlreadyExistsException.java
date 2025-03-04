@@ -1,4 +1,4 @@
-package dataaccess;
+package services;
 
 public class UserAlreadyExistsException extends RuntimeException {
     public UserAlreadyExistsException(String message) {

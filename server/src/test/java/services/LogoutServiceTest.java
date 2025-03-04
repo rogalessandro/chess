@@ -1,6 +1,5 @@
-package dataaccess;
+package services;
 
-import dataaccess.*;
 import model.AuthData;
 import org.junit.jupiter.api.*;
 import service.LogoutService;
@@ -33,8 +32,6 @@ public class LogoutServiceTest {
     public void LogoutExitoso() throws DataAccessException {
 
         logoutService.logout(authToken);
-
-
         assertNull(authDAO.getAuth(authToken));
     }
 }

@@ -5,7 +5,7 @@ import service.JoinGameService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import dataaccess.DataAccessException;
+import services.DataAccessException;
 import chess.ChessGame;
 import java.util.Map;
 
@@ -22,7 +22,6 @@ public class JoinGameHandler implements Route {
         try {
             String authToken = req.headers("Authorization");
 
-
             //also not sure why yelloww
             Map requestBody = gson.fromJson(req.body(), Map.class);
 
@@ -30,8 +29,6 @@ public class JoinGameHandler implements Route {
                 res.status(400);
                 return gson.toJson(Map.of("message", "Error: no  gameID or playerColor"));
             }
-
-
 
             //check if gameID or color good
             int gameID;
@@ -44,13 +41,10 @@ public class JoinGameHandler implements Route {
                     gameID = Integer.parseInt(gameIDObj.toString());
                 }
 
-
             } catch (Exception e) {
                 res.status(400);
                 return gson.toJson(Map.of("message", "Error: bad request - bad gameID"));
             }
-
-
 
             ChessGame.TeamColor color;
             try {
@@ -60,13 +54,10 @@ public class JoinGameHandler implements Route {
                 return gson.toJson(Map.of("message", "Error: bad request - bad playerColor"));
             }
             //#####
-
-
             joinGameService.joinGame(authToken, gameID, color);
 
             res.status(200);
             return "{}";
-
 
         } catch (DataAccessException e) {
             System.err.println("JoinGame Failed: " + e.getMessage());

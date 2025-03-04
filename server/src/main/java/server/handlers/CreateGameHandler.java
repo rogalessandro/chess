@@ -5,12 +5,11 @@ import service.CreateGameService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import dataaccess.DataAccessException;
+import services.DataAccessException;
 import model.GameData;
 import java.util.Map;
 
 public class CreateGameHandler implements Route {
-
 
     private final CreateGameService createGameService;
     private final Gson gson = new Gson();
@@ -18,7 +17,6 @@ public class CreateGameHandler implements Route {
     public CreateGameHandler(CreateGameService createGameService) {
         this.createGameService = createGameService;
     }
-
 
     public Object handle(Request req, Response res) {
         try {

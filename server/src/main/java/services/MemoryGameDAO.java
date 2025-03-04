@@ -1,4 +1,4 @@
-package dataaccess;
+package services;
 
 import model.GameData;
 import chess.ChessGame;
@@ -42,17 +42,12 @@ public class MemoryGameDAO implements GameDAO {
             throw new DataAccessException("Game does not exist");
         }
 
-
-
         if (color == ChessGame.TeamColor.WHITE && game.whiteUsername() != null && !game.whiteUsername().isEmpty()) {
             throw new DataAccessException("White seat already taken");
         }
         if (color == ChessGame.TeamColor.BLACK && game.blackUsername() != null && !game.blackUsername().isEmpty()) {
             throw new DataAccessException("Black seat already taken");
         }
-
-
-
 
         String whiteUsername;
         String blackUsername;
@@ -73,10 +68,6 @@ public class MemoryGameDAO implements GameDAO {
         games.put(gameID, updatedGame);
 
     }
-
-
-
-
 
     // example see in ptshop code
     public void clear() {

@@ -1,4 +1,4 @@
-package dataaccess;
+package services;
 
 import chess.ChessGame;
 import model.AuthData;
@@ -21,10 +21,8 @@ public class JoinGameTest {
         authDAO = new MemoryAuthDAO();
         joinGameService = new JoinGameService(gameDAO, authDAO);
 
-
         validAuthToken = "token correcto";
         authDAO.insertAuth(new AuthData(validAuthToken, "test_user"));
-
 
         gameID = gameDAO.generateGameID();
         GameData newGame = new GameData(gameID, "", "", "Test Game", new ChessGame());

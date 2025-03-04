@@ -5,7 +5,7 @@ import service.LogoutService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import dataaccess.DataAccessException;
+import services.DataAccessException;
 
 public class LogoutHandler implements Route {
     private final LogoutService logoutService;
@@ -14,7 +14,6 @@ public class LogoutHandler implements Route {
     public LogoutHandler(LogoutService logoutService) {
         this.logoutService = logoutService;
     }
-
 
     public Object handle(Request req, Response res) {
         try {

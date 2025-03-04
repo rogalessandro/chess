@@ -1,7 +1,5 @@
-package dataaccess;
+package services;
 
-import dataaccess.*;
-import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import service.AuthService;
@@ -19,7 +17,6 @@ public class LoginServiceTest {
         authDAO = new MemoryAuthDAO();
         authService = new AuthService(userDAO, authDAO);
 
-
         userDAO.insertUser(new UserData("UsuarioDePrueba", "contra123", "test@email.com"));
     }
 
@@ -34,7 +31,6 @@ public class LoginServiceTest {
     public void testLoginExitoso() throws DataAccessException {
 
         String authToken = authService.login("UsuarioDePrueba", "contra123");
-
 
         assertNotNull(authToken);
         assertNotNull(authDAO.getAuth(authToken));

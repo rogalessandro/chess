@@ -1,5 +1,4 @@
-package dataaccess;
-import dataaccess.*;
+package services;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.*;
@@ -27,7 +26,6 @@ public class CreateGameServiceTest {
     public void testCrearUnJuegoExitoso() throws DataAccessException {
 
         GameData game = createGameService.createGame(authToken, "JuegoPrueba");
-
 
         assertNotNull(game);
         assertEquals("JuegoPrueba", game.gameName());
