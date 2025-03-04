@@ -1,9 +1,9 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import services.DataAccessException;
-import services.UserAlreadyExistsException;
-import service.UserService;
+import service.DataAccessException;
+import service.UserAlreadyExistsException;
+import serviceFiles.UserService;
 import spark.Request;
 import spark.Response;
 import spark.Route;

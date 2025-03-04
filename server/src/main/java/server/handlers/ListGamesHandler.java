@@ -1,11 +1,11 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import service.ListGamesService;
+import serviceFiles.ListGamesService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import services.DataAccessException;
+import service.DataAccessException;
 import model.GameData;
 import java.util.List;
 import java.util.Map;

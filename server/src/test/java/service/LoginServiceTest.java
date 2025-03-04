@@ -1,8 +1,8 @@
-package services;
+package service;
 
 import model.UserData;
 import org.junit.jupiter.api.*;
-import service.AuthService;
+import serviceFiles.AuthService;
 
 import static org.junit.jupiter.api.Assertions.*;
 

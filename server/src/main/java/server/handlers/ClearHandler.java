@@ -1,7 +1,7 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import service.ClearService;
+import serviceFiles.ClearService;
 import spark.Request;
 import spark.Response;
 import spark.Route;

@@ -1,8 +1,8 @@
-package services;
+package service;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.*;
-import service.CreateGameService;
+import serviceFiles.CreateGameService;
 
 import static org.junit.jupiter.api.Assertions.*;
 

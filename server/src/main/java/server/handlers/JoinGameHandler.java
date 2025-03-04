@@ -1,11 +1,11 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import service.JoinGameService;
+import serviceFiles.JoinGameService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import services.DataAccessException;
+import service.DataAccessException;
 import chess.ChessGame;
 import java.util.Map;
 

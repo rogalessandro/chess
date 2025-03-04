@@ -1,20 +1,20 @@
 package server;
 
-import services.*;
+import service.*;
 import server.handlers.ListGamesHandler;
-import service.ListGamesService;
+import serviceFiles.ListGamesService;
 import server.handlers.ClearHandler;
-import service.ClearService;
+import serviceFiles.ClearService;
 import server.handlers.RegisterHandler;
-import service.UserService;
+import serviceFiles.UserService;
 import server.handlers.LoginHandler;
 import server.handlers.LogoutHandler;
 import server.handlers.JoinGameHandler;
-import service.JoinGameService;
-import service.LogoutService;
+import serviceFiles.JoinGameService;
+import serviceFiles.LogoutService;
 import server.handlers.CreateGameHandler;
-import service.CreateGameService;
-import service.AuthService;
+import serviceFiles.CreateGameService;
+import serviceFiles.AuthService;
 import spark.*;
 
 

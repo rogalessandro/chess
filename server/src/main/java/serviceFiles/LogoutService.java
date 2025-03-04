@@ -1,7 +1,7 @@
-package service;
+package serviceFiles;
 
-import services.AuthDAO;
-import services.DataAccessException;
+import service.AuthDAO;
+import service.DataAccessException;
 
 public class LogoutService {
     private final AuthDAO authDAO;

@@ -1,6 +1,6 @@
-package service;
+package serviceFiles;
 
-import services.*;
+import service.*;
 
 public class ClearService {
     private final UserDAO userDAO;

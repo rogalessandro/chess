@@ -1,9 +1,9 @@
-package services;
+package service;
 
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.*;
-import service.ListGamesService;
+import serviceFiles.ListGamesService;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 

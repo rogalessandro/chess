@@ -1,10 +1,10 @@
-package services;
+package service;
 
 import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.*;
-import service.JoinGameService;
+import serviceFiles.JoinGameService;
 
 import static org.junit.jupiter.api.Assertions.*;
 

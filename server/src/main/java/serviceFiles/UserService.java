@@ -1,9 +1,9 @@
-package service;
+package serviceFiles;
 
-import services.UserAlreadyExistsException;
-import services.UserDAO;
-import services.AuthDAO;
-import services.DataAccessException;
+import service.UserAlreadyExistsException;
+import service.UserDAO;
+import service.AuthDAO;
+import service.DataAccessException;
 import model.UserData;
 import model.AuthData;
 import java.util.UUID;

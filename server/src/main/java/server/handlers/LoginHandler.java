@@ -1,11 +1,11 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import service.AuthService;
+import serviceFiles.AuthService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import services.DataAccessException;
+import service.DataAccessException;
 import model.AuthData;
 import model.UserData;
 

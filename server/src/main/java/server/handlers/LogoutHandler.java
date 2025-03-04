@@ -1,11 +1,11 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import service.LogoutService;
+import serviceFiles.LogoutService;
 import spark.Request;
 import spark.Response;
 import spark.Route;
-import services.DataAccessException;
+import service.DataAccessException;
 
 public class LogoutHandler implements Route {
     private final LogoutService logoutService;
