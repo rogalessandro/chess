@@ -21,9 +21,9 @@ public class MemoryGameDAO implements GameDAO {
     }
 
 
-    public void updateGame(int gameID, GameData updateGame)   {
-        games.put(gameID, updateGame);
-    }
+//    public void updateGame(int gameID, GameData updateGame)   {
+//        games.put(gameID, updateGame);
+//    }
 
 
     public List<GameData> listGames() {
