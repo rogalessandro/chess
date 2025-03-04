@@ -26,7 +26,10 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
         if (limiteTablero(position.getRow() + direction, position.getColumn()) && board.getPiece(adelante) == null){
             moves.add(new ChessMove(position, adelante, null));
 
-            if ((teamColor == ChessGame.TeamColor.WHITE && position.getRow() == 2) || (teamColor == ChessGame.TeamColor.BLACK && position.getRow() == 7)){
+            if ((teamColor == ChessGame.TeamColor.WHITE
+                    && position.getRow() == 2) || (teamColor == ChessGame.TeamColor.BLACK
+                    && position.getRow() == 7)){
+
                 ChessPosition adelante2 = new ChessPosition(position.getRow() + 2 * direction, position.getColumn());
                 if (board.getPiece(adelante2) == null) {
                     moves.add(new ChessMove(position, adelante2, null));
@@ -67,7 +70,11 @@ public class PawnMovesCalculator implements PieceMovesCalculator{
 
         Collection<ChessMove> newMoves = new ArrayList<>();
         for(ChessMove move: moves){
-            if ((teamColor == ChessGame.TeamColor.WHITE && move.getEndPosition().getRow() == 8) || (teamColor == ChessGame.TeamColor.BLACK && move.getEndPosition().getRow() == 1)) {
+            if ((teamColor == ChessGame.TeamColor.WHITE
+                    && move.getEndPosition().getRow() == 8)
+                    || (teamColor == ChessGame.TeamColor.BLACK
+                    && move.getEndPosition().getRow() == 1)) {
+
                 ChessPiece.PieceType [] pieceTypes = {
                         ChessPiece.PieceType.BISHOP,
                         ChessPiece.PieceType.KNIGHT,
