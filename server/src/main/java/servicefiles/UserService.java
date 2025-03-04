@@ -1,4 +1,4 @@
-package serviceFiles;
+package servicefiles;
 
 import service.UserAlreadyExistsException;
 import service.UserDAO;

@@ -3,7 +3,7 @@ package server.handlers;
 import com.google.gson.Gson;
 import service.DataAccessException;
 import service.UserAlreadyExistsException;
-import serviceFiles.UserService;
+import servicefiles.UserService;
 import spark.Request;
 import spark.Response;
 import spark.Route;

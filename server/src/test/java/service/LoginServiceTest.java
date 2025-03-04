@@ -2,7 +2,7 @@ package service;
 
 import model.UserData;
 import org.junit.jupiter.api.*;
-import serviceFiles.AuthService;
+import servicefiles.AuthService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,7 +12,7 @@ public class LoginServiceTest {
     private AuthService authService;
 
     @BeforeEach
-    public void CreacionDeUtilidadess() throws DataAccessException {
+    public void creacionDeUtilidadess() throws DataAccessException {
         userDAO = new MemoryUserDAO();
         authDAO = new MemoryAuthDAO();
         authService = new AuthService(userDAO, authDAO);

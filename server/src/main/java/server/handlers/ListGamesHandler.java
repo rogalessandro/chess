@@ -1,7 +1,7 @@
 package server.handlers;
 
 import com.google.gson.Gson;
-import serviceFiles.ListGamesService;
+import servicefiles.ListGamesService;
 import spark.Request;
 import spark.Response;
 import spark.Route;

@@ -1,4 +1,4 @@
-package serviceFiles;
+package servicefiles;
 
 import service.AuthDAO;
 import service.GameDAO;

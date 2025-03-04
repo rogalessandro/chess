@@ -2,7 +2,7 @@ package service;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.*;
-import serviceFiles.CreateGameService;
+import servicefiles.CreateGameService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +13,7 @@ public class CreateGameServiceTest {
     private String authToken;
 
     @BeforeEach
-    public void CreaUtilidades() {
+    public void creaUtilidades() {
         gameDAO = new MemoryGameDAO();
         authDAO = new MemoryAuthDAO();
         createGameService = new CreateGameService(gameDAO, authDAO);

@@ -3,7 +3,7 @@ package service;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.*;
-import serviceFiles.ListGamesService;
+import servicefiles.ListGamesService;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -14,7 +14,7 @@ public class ListGamesServiceTest {
     private String authToken;
 
     @BeforeEach
-    public void CreaUtilidades() {
+    public void creaUtilidades() {
         gameDAO = new MemoryGameDAO();
         authDAO = new MemoryAuthDAO();
         listGamesService = new ListGamesService(gameDAO, authDAO);

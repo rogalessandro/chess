@@ -2,7 +2,7 @@ package service;
 
 import model.AuthData;
 import org.junit.jupiter.api.*;
-import serviceFiles.LogoutService;
+import servicefiles.LogoutService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,7 +12,7 @@ public class LogoutServiceTest {
     private String authToken;
 
     @BeforeEach
-    public void CreaUtilidades() {
+    public void creaUtilidades() {
         authDAO = new MemoryAuthDAO();
         logoutService = new LogoutService(authDAO);
 
@@ -23,13 +23,13 @@ public class LogoutServiceTest {
 
 
     @Test
-    public void LogoutTokenIncorrecto() {
+    public void logoutTokenIncorrecto() {
 
         assertThrows(DataAccessException.class, () -> logoutService.logout("invalidToken456"));
     }
 
     @Test
-    public void LogoutExitoso() throws DataAccessException {
+    public void logoutExitoso() throws DataAccessException {
 
         logoutService.logout(authToken);
         assertNull(authDAO.getAuth(authToken));

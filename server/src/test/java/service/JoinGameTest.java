@@ -4,7 +4,7 @@ import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import org.junit.jupiter.api.*;
-import serviceFiles.JoinGameService;
+import servicefiles.JoinGameService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,7 +16,7 @@ public class JoinGameTest {
     private int gameID;
 
     @BeforeEach
-    public void CreacionDeUtilidades() throws DataAccessException {
+    public void creacionDeUtilidades() throws DataAccessException {
         gameDAO = new MemoryGameDAO();
         authDAO = new MemoryAuthDAO();
         joinGameService = new JoinGameService(gameDAO, authDAO);

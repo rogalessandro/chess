@@ -1,4 +1,4 @@
-package serviceFiles;
+package servicefiles;
 
 import chess.ChessGame;
 import service.AuthDAO;

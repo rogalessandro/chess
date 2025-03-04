@@ -4,7 +4,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import serviceFiles.ClearService;
+import servicefiles.ClearService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,7 +15,7 @@ public class ClearServiceTest {
     private ClearService clearService;
 
     @BeforeEach
-    public void CreacionDeUtilidades() {
+    public void creacionDeUtilidades() {
         userDAO = new MemoryUserDAO();
         gameDAO = new MemoryGameDAO();
         authDAO = new MemoryAuthDAO();
