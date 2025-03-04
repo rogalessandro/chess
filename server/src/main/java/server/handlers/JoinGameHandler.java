@@ -21,8 +21,7 @@ public class JoinGameHandler implements Route {
     public Object handle(Request req, Response res) {
         try {
             String authToken = req.headers("Authorization");
-            System.out.println("JoinGame Request - Auth Token: " + authToken);
-            System.out.println("Request Body: " + req.body());
+
 
             //also not sure why yelloww
             Map requestBody = gson.fromJson(req.body(), Map.class);
@@ -62,8 +61,6 @@ public class JoinGameHandler implements Route {
             }
             //#####
 
-            System.out.println("Parsed Game ID: " + gameID);
-            System.out.println("Parsed Color: " + color);
 
             joinGameService.joinGame(authToken, gameID, color);
 

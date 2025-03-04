@@ -21,8 +21,6 @@ public class JoinGameService {
             throw new DataAccessException("Missing auth token");
         }
 
-        System.out.println("Auth Token Verified: " + authToken);
-        System.out.println("Attempting to Join Game ID: " + gameID + " as " + color);
 
 
         AuthData authData = authDAO.getAuth(authToken);
@@ -31,7 +29,6 @@ public class JoinGameService {
             throw new DataAccessException("Unauthorized - Invalid token");
         }
 
-        System.out.println("User: " + authData.username() + " found. Proceeding to join game.");
 
 
         GameData game = gameDAO.getGame(gameID);

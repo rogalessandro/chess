@@ -35,14 +35,13 @@ public class MemoryGameDAO implements GameDAO {
     }
 
     public void joinGame(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
-        System.out.println("Checking if game exists for ID: " + gameID);
+
         GameData game = games.get(gameID);
 
         if (game == null) {
             throw new DataAccessException("Game does not exist");
         }
 
-        System.out.println("Game Found: " + game.gameName());
 
 
         if (color == ChessGame.TeamColor.WHITE && game.whiteUsername() != null && !game.whiteUsername().isEmpty()) {
@@ -52,7 +51,7 @@ public class MemoryGameDAO implements GameDAO {
             throw new DataAccessException("Black seat already taken");
         }
 
-        System.out.println("Assigning user " + username + " to " + color);
+
 
 
         String whiteUsername;
@@ -72,8 +71,6 @@ public class MemoryGameDAO implements GameDAO {
 
         GameData updatedGame = new GameData(game.gameID(), whiteUsername, blackUsername, game.gameName(), game.game());
         games.put(gameID, updatedGame);
-
-        System.out.println("Game Updated: " + updatedGame);
 
     }
 
