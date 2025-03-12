@@ -19,7 +19,7 @@ public interface GameDAO {
 
     void joinGame(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException;
 
-    void clear();
+    void clear() throws DataAccessException;
 }
 
 
