@@ -107,7 +107,7 @@ public class MySQLGameDAO implements GameDAO {
             stmt = conn.prepareStatement(sql);
             resultSet = stmt.executeQuery();
 
-            if (resultSet.next()) {
+            while (resultSet.next()) {
                 ChessGame game = gson.fromJson(resultSet.getString("game_state"), ChessGame.class);
                 games.add(new GameData(resultSet.getInt("game_id"), resultSet.getString("white_username"),
                         resultSet.getString("black_username"), resultSet.getString("game_name"), game));
@@ -135,7 +135,39 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public void joinGame(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        try {
 
+            conn = DatabaseManager.getConnection();
+            String sql;
+            if (color == ChessGame.TeamColor.WHITE) {
+                sql = "UPDATE games SET white_username = ? WHERE game_id = ?";
+            } else {
+                sql = "UPDATE games SET black_username = ? WHERE game_id = ?";
+            }
+
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, username);
+            stmt.setInt(2, gameID);
+            int rowsUpdated = stmt.executeUpdate();
+
+            if (rowsUpdated == 0) {
+                System.out.println("No games");
+                System.out.println(username + " joined game " + gameID + " as " + color);
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Cant join game");
+            throw new DataAccessException(e.getMessage());
+        } finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.out.println("No se cerro las conexiones, por que?");
+            }
+        }
     }
 
     @Override
