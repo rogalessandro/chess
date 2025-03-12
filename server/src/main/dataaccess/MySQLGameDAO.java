@@ -12,8 +12,42 @@ import java.util.List;
 
 
 public class MySQLGameDAO implements GameDAO {
+    private final Gson gson = new Gson();
+
     @Override
     public void insertGame(GameData game) throws DataAccessException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+
+        try{
+            conn = DatabaseManager.getConnection();
+            String sql = "INSERT INTO games (game_name, white_username, black_username, game_state) VALUES (?, ?, ?, ?)";
+
+            stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, game.gameName());
+            stmt.setString(2, game.whiteUsername());
+            stmt.setString(3, game.blackUsername());
+            stmt.setString(4, gson.toJson(game.game()));
+
+            // we need the id of the game, take it here
+            ResultSet keys = stmt.getGeneratedKeys();
+            if (keys.next()) {
+                int generatedID = keys.getInt(1);
+                System.out.println("Game and id " + generatedID);
+            }
+        }catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        }finally {
+
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.out.println("No se cerro las conexiones, por que?");
+            }
+        }
+
 
     }
 
