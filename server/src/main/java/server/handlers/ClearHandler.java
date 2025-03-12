@@ -18,11 +18,13 @@ public class ClearHandler implements Route {
     }
 
     public Object handle(Request req, Response res) {
+
         try {
             clearService.clear();
             res.status(200);
             res.type("application/json");
             return gson.toJson(Map.of("message", "Database cleared successfully"));
+
         } catch (Exception e) {
             res.status(500);
             return gson.toJson(Map.of("message", "Error clearing database: " + e.getMessage()));

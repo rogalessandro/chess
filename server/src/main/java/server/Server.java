@@ -32,6 +32,11 @@ public class Server {
 
         //Service using the shared DAO as TA said to create here
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
+
+
+
+
+
         AuthService authService = new AuthService(userDAO, authDAO);
         UserService userService = new UserService(userDAO, authDAO);
         LogoutService logoutService = new LogoutService(authDAO);
@@ -41,6 +46,10 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", new ClearHandler(clearService));
+
+
+
+
         Spark.post("/user", new RegisterHandler(userService));
         Spark.post("/session", new LoginHandler(authService));
         Spark.delete("/session", new LogoutHandler(logoutService));
