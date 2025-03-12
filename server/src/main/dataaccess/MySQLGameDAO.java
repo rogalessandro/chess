@@ -97,7 +97,35 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public List<GameData> listGames() throws DataAccessException {
-        return List.of();
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet resultSet = null;
+        List<GameData> games = new ArrayList<>();
+        try {
+            conn = DatabaseManager.getConnection();
+            String sql = "SELECT * FROM games";
+            stmt = conn.prepareStatement(sql);
+            resultSet = stmt.executeQuery();
+
+            if (resultSet.next()) {
+                ChessGame game = gson.fromJson(resultSet.getString("game_state"), ChessGame.class);
+                games.add(new GameData(resultSet.getInt("game_id"), resultSet.getString("white_username"),
+                        resultSet.getString("black_username"), resultSet.getString("game_name"), game));
+            }
+
+            return games;
+
+        } catch (SQLException e) {
+            throw new DataAccessException(e.getMessage());
+        } finally {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.out.println("No se cerro las conexiones, por que?");
+            }
+        }
     }
 
     @Override
