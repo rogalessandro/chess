@@ -3,6 +3,7 @@ package dataaccess;
 import model.GameData;
 import chess.ChessGame;
 import com.google.gson.Gson;
+import model.UserData;
 import service.DataAccessException;
 import service.GameDAO;
 
@@ -53,7 +54,45 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
-        return null;
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet resultSet = null;
+
+        try{
+            conn = DatabaseManager.getConnection();
+
+            String sqlBuscarUsuario = "SELECT * FROM games WHERE game_id = ?";
+            stmt = conn.prepareStatement(sqlBuscarUsuario);
+
+            stmt.setInt(1, gameID);
+            stmt.executeQuery();
+
+            if(resultSet.next()){
+                ChessGame game = gson.fromJson(resultSet.getString("game_state"), ChessGame.class);
+                return new GameData(
+                        resultSet.getInt("game_id"),
+                        resultSet.getString("white_username"),
+                        resultSet.getString("black_username"),
+                        resultSet.getString("game_name"),
+                        game
+                );
+            }else{
+                //No hay game
+                return null;
+            }
+
+        } catch (SQLException e){
+            throw new DataAccessException(e.getMessage());
+
+        }finally {
+            try {
+                if (resultSet != null) resultSet.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.out.println("No se cerro las conexiones, por que?");
+            }
+        }
     }
 
     @Override
