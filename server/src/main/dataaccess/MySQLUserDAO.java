@@ -89,8 +89,23 @@ public class MySQLUserDAO implements UserDAO {
     public void clear() throws DataAccessException {
         Connection conn = null;
         PreparedStatement stmt = null;
-        try(){
+        try{
+            conn = DatabaseManager.getConnection();
 
+            String sql = "DELETE FROM users";
+            stmt = conn.prepareStatement(sql);
+
+            stmt.executeUpdate();
+
+        }catch(SQLException e){
+            throw new DataAccessException(e.getMessage());
+        }finally {
+            try {
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                System.out.println("No se cerro las conexiones, por que?");
+            }
         }
     }
 
