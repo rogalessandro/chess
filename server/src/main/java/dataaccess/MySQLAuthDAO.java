@@ -85,7 +85,7 @@ public class MySQLAuthDAO implements AuthDAO {
             throw new DataAccessException(e.getMessage());
         } finally {
             try {
-                if (resultSet != null) resultSet.close();
+                if (resultSet != null) {resultSet.close();}
                 if (stmt != null) {stmt.close();}
                 if (conn != null) {conn.close();}
             } catch (SQLException e) {

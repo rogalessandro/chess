@@ -152,46 +152,50 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingLocation = findKingLocation(teamColor);
 
-        for(int i = 1; i < 9; i++){
-            for(int j = 1; j < 9; j++){
-                ChessPosition pieceLoc = new ChessPosition(i,j);
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition pieceLoc = new ChessPosition(i, j);
                 ChessPiece piece = tablero.getPiece(pieceLoc);
 
-
-                if(piece != null && piece.getTeamColor() != teamColor){
+                if (piece != null && piece.getTeamColor() != teamColor) {
                     Collection<ChessMove> moves = piece.pieceMoves(tablero, pieceLoc);
-                    if(piece.getPieceType() == ChessPiece.PieceType.PAWN){
 
-                        int direction;
-                        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                            direction = 1;
-                        } else {
-                            direction = -1;
-                        }
-
-                        if((pieceLoc.getRow() + direction == kingLocation.getRow())){
-                            if(pieceLoc.getColumn() > kingLocation.getColumn()){
-                                if((pieceLoc.getColumn() - kingLocation.getColumn()) == 1){
-                                    return true;
-                                }
-                            }else{
-                                if((kingLocation.getColumn() - pieceLoc.getColumn()) == 1){
-                                    return true;
-                                }
-                            }
-                        }
-                    }else{
-                        for(ChessMove move : moves){
-                            if(move.getEndPosition().equals(kingLocation)){
-                                return true;
-                            }
-                        }
+                    if (checkIfPawn(piece, pieceLoc, moves, kingLocation)) {
+                        return true;
                     }
                 }
             }
         }
         return false;
     }
+
+    public boolean checkDirection(ChessPosition pieceLoc, int direction, ChessPosition kingLocation) {
+        if (pieceLoc.getRow() + direction == kingLocation.getRow()) {
+            if (pieceLoc.getColumn() > kingLocation.getColumn()) {
+                return (pieceLoc.getColumn() - kingLocation.getColumn()) == 1;
+            } else {
+                return (kingLocation.getColumn() - pieceLoc.getColumn()) == 1;
+            }
+        }
+        return false;
+    }
+
+    public boolean checkIfPawn(ChessPiece piece, ChessPosition pieceLoc, Collection<ChessMove> moves, ChessPosition kingLocation) {
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            int direction = (piece.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
+
+            return checkDirection(pieceLoc, direction, kingLocation);
+        } else {
+            for (ChessMove move : moves) {
+                if (move.getEndPosition().equals(kingLocation)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
 
 
     public ChessPosition findKingLocation(TeamColor teamColor) {
@@ -272,47 +276,50 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-
-
         if (isInCheck(teamColor)) {
             return false;
         }
 
-
-        for(int i = 1; i < 9; i++) {
+        for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-
                 ChessPosition pieceLoc = new ChessPosition(i, j);
                 ChessPiece piece = tablero.getPiece(pieceLoc);
 
-                if (piece != null && piece.getTeamColor() == piezaTurno) {
-                    Collection<ChessMove> moves = piece.pieceMoves(tablero, pieceLoc);
-
-                    for(ChessMove move: moves){
-
-                        ChessPiece piezaAtacada = tablero.getPiece(move.getEndPosition());
-
-                        tablero.addPiece(move.getEndPosition(), piece);
-                        tablero.addPiece(move.getStartPosition(), null);
-
-                        boolean isCheck = isInCheck(teamColor);
-
-                        tablero.addPiece(pieceLoc,piece);
-                        tablero.addPiece(move.getEndPosition(), piezaAtacada);
-
-
-                        if(!isCheck){return false;}
-
-
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    if (canMoveWithoutCheck(piece, pieceLoc, teamColor, tablero)) {
+                        return false;
                     }
-
                 }
             }
         }
 
-
         return true;
     }
+
+    public boolean canMoveWithoutCheck(ChessPiece piece, ChessPosition pieceLoc, TeamColor teamColor, ChessBoard tablero) {
+        Collection<ChessMove> moves = piece.pieceMoves(tablero, pieceLoc);
+
+        for (ChessMove move : moves) {
+            ChessPiece capturedPiece = tablero.getPiece(move.getEndPosition());
+
+
+            tablero.addPiece(move.getEndPosition(), piece);
+            tablero.addPiece(move.getStartPosition(), null);
+
+            boolean isCheck = isInCheck(teamColor);
+
+
+            tablero.addPiece(pieceLoc, piece);
+            tablero.addPiece(move.getEndPosition(), capturedPiece);
+
+            if (!isCheck) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     /**
      * Sets this game's chessboard with a given board
