@@ -19,6 +19,19 @@ class MySQLGameDAOTest {
     }
 
     @Test
+    void joinGameTest() throws DataAccessException {
+        gameDAO.clear();
+        gameDAO.insertGame(new GameData(1, null, null, "JoinGameTest", new ChessGame()));
+
+        gameDAO.joinGame(1, "player1", ChessGame.TeamColor.WHITE);
+        GameData updatedGame = gameDAO.getGame(1);
+
+        assertNotNull(updatedGame);
+        assertEquals("player1", updatedGame.whiteUsername());
+        assertNull(updatedGame.blackUsername());
+    }
+
+    @Test
     void insertGameAndRetrieveTest() throws DataAccessException {
         GameData newGame = new GameData(1, "whitePlayer", "blackPlayer", "TestGame", new ChessGame());
         gameDAO.insertGame(newGame);
@@ -40,18 +53,7 @@ class MySQLGameDAOTest {
         assertEquals(2, games.size());
     }
 
-    @Test
-    void joinGameTest() throws DataAccessException {
-        gameDAO.clear();
-        gameDAO.insertGame(new GameData(1, null, null, "JoinGameTest", new ChessGame()));
 
-        gameDAO.joinGame(1, "player1", ChessGame.TeamColor.WHITE);
-        GameData updatedGame = gameDAO.getGame(1);
-
-        assertNotNull(updatedGame);
-        assertEquals("player1", updatedGame.whiteUsername());
-        assertNull(updatedGame.blackUsername());
-    }
 
     @Test
     void clearGamesTest() throws DataAccessException {
