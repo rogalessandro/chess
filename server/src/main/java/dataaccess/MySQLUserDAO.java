@@ -19,14 +19,9 @@ public class MySQLUserDAO implements UserDAO {
 
         try {
             conn = DatabaseManager.getConnection();
-
             String sqlInsert = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
             stmt = conn.prepareStatement(sqlInsert);
-
-
             String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
-
-            // insertar los valores
             stmt.setString(1, user.username());
             stmt.setString(2, hashedPassword);
             stmt.setString(3, user.email());
@@ -41,8 +36,8 @@ public class MySQLUserDAO implements UserDAO {
         }finally {
 
             try {
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
+                if (stmt != null) {stmt.close();}
+                if (conn != null) {conn.close();}
             } catch (SQLException e) {
                 System.out.println("No se cerro las conexiones, por que?");
             }
@@ -79,9 +74,10 @@ public class MySQLUserDAO implements UserDAO {
             throw new DataAccessException("Error retrieving user: " + e.getMessage());
         } finally {
             try {
-                if (rs != null) rs.close();
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
+                if (rs != null) {rs.close();}
+
+                if (stmt != null) {stmt.close();}
+                if (conn != null) {conn.close();}
             } catch (SQLException e) {
                 System.out.println("Error closing connection: " + e.getMessage());
             }
@@ -105,8 +101,8 @@ public class MySQLUserDAO implements UserDAO {
             throw new DataAccessException(e.getMessage());
         }finally {
             try {
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
+                if (stmt != null) {stmt.close();}
+                if (conn != null) {conn.close();}
             } catch (SQLException e) {
                 System.out.println("No se cerro las conexiones, por que?");
             }
