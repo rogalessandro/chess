@@ -224,44 +224,27 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-
-        if (!isInCheck(teamColor)) {
-            return false;
-        }
-
-
-        for(int i = 1; i < 9; i++){
-            for(int j = 1; j < 9; j++){
-
-                ChessPosition pieceLoc = new ChessPosition(i,j);
-                ChessPiece piece = tablero.getPiece(pieceLoc);
-
-                if (piece != null && piece.getTeamColor() == teamColor) {
-                    if (canMoveWithoutCheck(piece, pieceLoc, teamColor, tablero)) {
-                        return false;
-                    }
-                }
-            }
-        }
-
-
-        return true;
+        return isInCheck(teamColor) && hasNoLegalMoves(teamColor);
     }
-
-
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having
-     * no valid moves
+     * no valid moves.
      *
      * @param teamColor which team to check for stalemate
-     * @return True if the specified team is in stalemate, otherwise false
+     * @return True if the specified team is in stalemate, otherwise false.
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if (isInCheck(teamColor)) {
-            return false;
-        }
+        return !isInCheck(teamColor) && hasNoLegalMoves(teamColor);
+    }
 
+    /**
+     * Checks if the given team has no valid moves left.
+     *
+     * @param teamColor The team to check.
+     * @return True if the team has no legal moves, otherwise false.
+     */
+    private boolean hasNoLegalMoves(TeamColor teamColor) {
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 ChessPosition pieceLoc = new ChessPosition(i, j);
@@ -274,9 +257,9 @@ public class ChessGame {
                 }
             }
         }
-
         return true;
     }
+
 
     public boolean canMoveWithoutCheck(ChessPiece piece, ChessPosition pieceLoc, TeamColor teamColor, ChessBoard tablero) {
         Collection<ChessMove> moves = piece.pieceMoves(tablero, pieceLoc);
@@ -301,7 +284,6 @@ public class ChessGame {
 
         return false;
     }
-
 
     /**
      * Sets this game's chessboard with a given board
