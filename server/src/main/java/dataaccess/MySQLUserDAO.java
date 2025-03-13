@@ -12,10 +12,33 @@ import java.sql.SQLException;
 
 public class MySQLUserDAO implements UserDAO {
 
+    public MySQLUserDAO() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        createUsersTable();
+    }
+
+    private void createUsersTable() throws DataAccessException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS users (
+            id INT NOT NULL AUTO_INCREMENT,
+            username VARCHAR(255) NOT NULL UNIQUE,
+            password VARCHAR(255) NOT NULL,
+            email VARCHAR(255) NOT NULL UNIQUE,
+            PRIMARY KEY (id)
+        )
+    """;
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error creating users table: " + e.getMessage());
+        }
+    }
 
     public void insertUser(UserData user) throws DataAccessException {
         Connection conn = null;
         PreparedStatement stmt = null;
+
 
         try {
             conn = DatabaseManager.getConnection();

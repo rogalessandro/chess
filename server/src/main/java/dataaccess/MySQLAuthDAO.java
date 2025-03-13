@@ -11,6 +11,26 @@ import java.sql.SQLException;
 
 public class MySQLAuthDAO implements AuthDAO {
 
+    public MySQLAuthDAO() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        createAuthTable();
+    }
+
+    private void createAuthTable() throws DataAccessException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS auth_tokens (
+            token VARCHAR(255) NOT NULL PRIMARY KEY,
+            user_id INT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+        )
+    """;
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error creating auth_tokens table: " + e.getMessage());
+        }
+    }
 
     public void insertAuth(AuthData authData) throws DataAccessException {
         Connection conn = null;

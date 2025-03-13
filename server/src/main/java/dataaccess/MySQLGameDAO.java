@@ -14,6 +14,31 @@ import java.util.List;
 public class MySQLGameDAO implements GameDAO {
     private final Gson gson = new Gson();
 
+    public MySQLGameDAO() throws DataAccessException {
+        DatabaseManager.createDatabase();
+        createGamesTable();
+    }
+
+    private void createGamesTable() throws DataAccessException {
+        String sql = """
+        CREATE TABLE IF NOT EXISTS games (
+            game_id INT NOT NULL AUTO_INCREMENT,
+            game_name VARCHAR(255) NOT NULL,
+            white_username VARCHAR(255),
+            black_username VARCHAR(255),
+            game_state JSON NOT NULL,
+            PRIMARY KEY (game_id)
+        )
+    """;
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException("Error creating games table: " + e.getMessage());
+        }
+    }
+
+
 
     @Override
     public void insertGame(GameData game) throws DataAccessException {

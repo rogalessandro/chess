@@ -2,6 +2,7 @@ package server;
 
 import dataaccess.MySQLAuthDAO;
 import dataaccess.MySQLGameDAO;
+import dataaccess.DatabaseManager;
 import dataaccess.MySQLUserDAO;
 import service.*;
 import server.handlers.ListGamesHandler;
@@ -23,15 +24,26 @@ import spark.*;
 
 public class Server {
 
+
     public int run(int desiredPort) {
+
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
 
         //DOA instances
-        UserDAO userDAO = new MySQLUserDAO();
-        GameDAO gameDAO = new MySQLGameDAO();
-        AuthDAO authDAO = new MySQLAuthDAO();
+
+        UserDAO userDAO;
+        GameDAO gameDAO;
+        AuthDAO authDAO;
+
+        try {
+            userDAO = new MySQLUserDAO();
+            gameDAO = new MySQLGameDAO();
+            authDAO = new MySQLAuthDAO();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Error initializing DAOs: " + e.getMessage());
+        }
 
         //Service using the shared DAO as TA said to create here
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
