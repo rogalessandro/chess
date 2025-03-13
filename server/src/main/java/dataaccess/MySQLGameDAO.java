@@ -3,7 +3,6 @@ package dataaccess;
 import model.GameData;
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.UserData;
 import service.DataAccessException;
 import service.GameDAO;
 
@@ -19,78 +18,93 @@ public class MySQLGameDAO implements GameDAO {
     public void insertGame(GameData game) throws DataAccessException {
         Connection conn = null;
         PreparedStatement stmt = null;
+        ResultSet rs = null;
 
-
-        try{
+        try {
             conn = DatabaseManager.getConnection();
             String sql = "INSERT INTO games (game_name, white_username, black_username, game_state) VALUES (?, ?, ?, ?)";
-
             stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
             stmt.setString(1, game.gameName());
             stmt.setString(2, game.whiteUsername());
             stmt.setString(3, game.blackUsername());
-            stmt.setString(4, gson.toJson(game.game()));
+            stmt.setString(4, "{}");
 
-            // we need the id of the game, take it here
-            ResultSet keys = stmt.getGeneratedKeys();
-            if (keys.next()) {
-                int generatedID = keys.getInt(1);
-                System.out.println("Game and id " + generatedID);
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new DataAccessException("Failed to insert game.");
             }
-        }catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
-        }finally {
 
+
+            rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                int generatedId = rs.getInt(1);
+                System.out.println("Game inserted with ID: " + generatedId);
+            } else {
+                throw new DataAccessException("Failed to retrieve game ID.");
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error inserting game: " + e.getMessage());
+        } finally {
             try {
+                if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
+                System.out.println("Error closing connection: " + e.getMessage());
             }
         }
-
-
     }
+
+
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         Connection conn = null;
         PreparedStatement stmt = null;
-        ResultSet resultSet = null;
-
-        try{
+        ResultSet rs = null;
+        try {
             conn = DatabaseManager.getConnection();
 
-            String sqlBuscarUsuario = "SELECT * FROM games WHERE game_id = ?";
-            stmt = conn.prepareStatement(sqlBuscarUsuario);
 
+            String sql = "SELECT * FROM games WHERE game_id = ?";
+            stmt = conn.prepareStatement(sql);
             stmt.setInt(1, gameID);
-            resultSet = stmt.executeQuery();
 
-            if(resultSet.next()){
-                ChessGame game = gson.fromJson(resultSet.getString("game_state"), ChessGame.class);
-                return new GameData(
-                        resultSet.getInt("game_id"),
-                        resultSet.getString("white_username"),
-                        resultSet.getString("black_username"),
-                        resultSet.getString("game_name"),
-                        game
-                );
-            }else{
-                //No hay game
-                return null;
+
+            System.out.println("Executing query: " + stmt.toString());
+
+            rs = stmt.executeQuery();
+
+            if (rs == null) {
+                throw new DataAccessException("Query execution failed. ResultSet is null.");
             }
 
-        } catch (SQLException e){
+            if (rs.next()) {
+                ChessGame game = new Gson().fromJson(rs.getString("game_state"), ChessGame.class);
+                System.out.println("Game found: " + rs.getString("game_name"));
+                return new GameData(
+                        rs.getInt("game_id"),
+                        rs.getString("white_username"),
+                        rs.getString("black_username"),
+                        rs.getString("game_name"),
+                        game
+                );
+            } else {
+                System.out.println("No game found with ID: " + gameID);
+                return null;
+            }
+        } catch (SQLException e) {
+            System.out.println("Database error in getGame(): " + e.getMessage());
             throw new DataAccessException(e.getMessage());
-
-        }finally {
+        } finally {
             try {
-                if (resultSet != null) resultSet.close();
+                if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
+                System.out.println("Error closing resources: " + e.getMessage());
             }
         }
     }
@@ -130,7 +144,7 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public int generateGameID() {
-        return 0;
+        return 1;
     }
 
     @Override
@@ -173,21 +187,33 @@ public class MySQLGameDAO implements GameDAO {
     @Override
     public void clear() throws DataAccessException {
         Connection conn = null;
-        PreparedStatement stmt = null;
+        Statement stmt = null;
+
         try {
             conn = DatabaseManager.getConnection();
-            String sql = "DELETE FROM games";
-            stmt = conn.prepareStatement(sql);
-            stmt.executeUpdate();
-            System.out.println("All games deleted!");
+            stmt = conn.createStatement();
+
+
+            // i cant figure out how else to reset but this works so xd
+            stmt.executeUpdate("SET FOREIGN_KEY_CHECKS = 0;");
+            stmt.executeUpdate("TRUNCATE TABLE games;");
+            stmt.executeUpdate("ALTER TABLE games AUTO_INCREMENT = 1;");
+            stmt.executeUpdate("TRUNCATE TABLE auth_tokens;");
+            stmt.executeUpdate("ALTER TABLE auth_tokens AUTO_INCREMENT = 1;");
+            stmt.executeUpdate("TRUNCATE TABLE users;");
+            stmt.executeUpdate("ALTER TABLE users AUTO_INCREMENT = 1;");
+            stmt.executeUpdate("SET FOREIGN_KEY_CHECKS = 1;");
+
+            System.out.println("RESETED");
+
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException("Error resetting database: " + e.getMessage());
         } finally {
             try {
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
+                System.out.println("Error closing connection: " + e.getMessage());
             }
         }
     }

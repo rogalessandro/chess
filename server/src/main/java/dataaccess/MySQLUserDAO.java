@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import service.DataAccessException;
 import service.UserDAO;
 
@@ -22,9 +23,12 @@ public class MySQLUserDAO implements UserDAO {
             String sqlInsert = "INSERT INTO users (username, password, email) VALUES (?, ?, ?)";
             stmt = conn.prepareStatement(sqlInsert);
 
+
+            String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+
             // insertar los valores
             stmt.setString(1, user.username());
-            stmt.setString(2, user.password());
+            stmt.setString(2, hashedPassword);
             stmt.setString(3, user.email());
 
             stmt.executeUpdate();
@@ -47,43 +51,43 @@ public class MySQLUserDAO implements UserDAO {
     }
 
 
+    @Override
     public UserData getUser(String username) throws DataAccessException {
         Connection conn = null;
         PreparedStatement stmt = null;
-        ResultSet resultSet = null;
+        ResultSet rs = null;
 
-        try{
+        try {
             conn = DatabaseManager.getConnection();
-
-            String sqlBuscarUsuario = "SELECT * FROM users WHERE username = ?";
-            stmt = conn.prepareStatement(sqlBuscarUsuario);
-
+            String sql = "SELECT username, password, email FROM users WHERE username = ?";
+            stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);
-            stmt.executeQuery();
+            rs = stmt.executeQuery();
 
-            if(resultSet.next()){
-                return new UserData(resultSet.getString("username"),
-                        resultSet.getString("password"), resultSet.getString("email"));
+            if (rs.next()) {
+                String storedHashedPassword = rs.getString("password");
+                String email = rs.getString("email");
 
-            }else{
-                //No hay usuario
+
+
+                return new UserData(username, storedHashedPassword, email);
+            } else {
                 return null;
             }
 
-        } catch (SQLException e){
-            throw new DataAccessException(e.getMessage());
-
-        }finally {
+        } catch (SQLException e) {
+            throw new DataAccessException("Error retrieving user: " + e.getMessage());
+        } finally {
             try {
-                if (resultSet != null) resultSet.close();
+                if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
+                System.out.println("Error closing connection: " + e.getMessage());
             }
         }
-
     }
+
 
 
     public void clear() throws DataAccessException {

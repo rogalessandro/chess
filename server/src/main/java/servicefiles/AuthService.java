@@ -1,5 +1,6 @@
 package servicefiles;
 
+import org.mindrot.jbcrypt.BCrypt;
 import service.UserDAO;
 import service.AuthDAO;
 import service.DataAccessException;
@@ -19,7 +20,7 @@ public class AuthService {
     public String login(String username, String password) throws DataAccessException {
         UserData user = userDAO.getUser(username);
 
-        if (user == null || !user.password().equals(password)) {
+        if (user == null || !BCrypt.checkpw(password, user.password())) {
             throw new DataAccessException("El usuario esta mal");
         }
 
