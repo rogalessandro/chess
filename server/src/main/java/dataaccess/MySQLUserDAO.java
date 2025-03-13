@@ -56,15 +56,6 @@ public class MySQLUserDAO implements UserDAO {
         } catch (SQLException e) {
             System.out.println("No se inserto el usuario, paso algo");
             throw new DataAccessException(e.getMessage());
-        }finally {
-
-            try {
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
-            }
-
         }
     }
 
@@ -95,15 +86,6 @@ public class MySQLUserDAO implements UserDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException("Error retrieving user: " + e.getMessage());
-        } finally {
-            try {
-                if (rs != null) {rs.close();}
-
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-                System.out.println("Error closing connection: " + e.getMessage());
-            }
         }
     }
 
@@ -122,14 +104,8 @@ public class MySQLUserDAO implements UserDAO {
 
         }catch(SQLException e){
             throw new DataAccessException(e.getMessage());
-        }finally {
-            try {
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
-            }
         }
+
     }
 
 

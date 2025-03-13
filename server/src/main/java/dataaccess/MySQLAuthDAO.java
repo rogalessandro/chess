@@ -50,13 +50,6 @@ public class MySQLAuthDAO implements AuthDAO {
         } catch (SQLException e) {
             System.out.println("No se inserto el usuario, paso algo");
             throw new DataAccessException(e.getMessage());
-        } finally {
-            try {
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
-            }
         }
     }
 
@@ -83,14 +76,6 @@ public class MySQLAuthDAO implements AuthDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
-        } finally {
-            try {
-                if (resultSet != null) {resultSet.close();}
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
-            }
         }
     }
 
@@ -111,13 +96,6 @@ public class MySQLAuthDAO implements AuthDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());
-        } finally {
-            try {
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
-            }
         }
     }
 
@@ -135,13 +113,6 @@ public class MySQLAuthDAO implements AuthDAO {
 
         }catch(SQLException e){
             throw new DataAccessException(e.getMessage());
-        }finally {
-            try {
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
-            }
         }
     }
 

@@ -2,11 +2,10 @@ package chess;
 import java.util.ArrayList;
 import java.util.Collection;
 import chess.ChessPosition;
-public class KnightMovesCalculator implements PieceMovesCalculator{
+public class KnightMovesCalculator extends MovePiecesForward implements PieceMovesCalculator{
     @Override
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition position, ChessGame.TeamColor teamColor) {
-        Collection<ChessMove> moves = new ArrayList<>();
-        ChessPiece positionTO;
+
         int[][] direccionesPosibles = {
                 {1, -2},
                 {-1, -2},
@@ -18,31 +17,8 @@ public class KnightMovesCalculator implements PieceMovesCalculator{
                 {-2, 1}
         };
 
-        for (int[] direccion : direccionesPosibles) {
+    return calculateMoves(board, position, teamColor, direccionesPosibles, ChessPiece.PieceType.KNIGHT);
 
-            int nuevaRow = position.getRow() + direccion[0];
-            int nuevaCol = position.getColumn() + direccion[1];
-
-
-            if (limiteTablero(nuevaRow, nuevaCol)) {
-                ChessPosition nuevaPosition = new ChessPosition(nuevaRow, nuevaCol);
-                positionTO = board.getPiece(nuevaPosition);
-
-
-                if (positionTO == null || positionTO.getTeamColor() != teamColor) {
-                    moves.add(new ChessMove(position, nuevaPosition, null));
-                }
-            }
-        }
-
-        return moves;
-
-    }
-
-
-
-    private boolean limiteTablero(int row, int col){
-        return row > 0 && row <= 8 && col >0 && col <= 8;
     }
 
 }

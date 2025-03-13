@@ -98,7 +98,7 @@ public class MySQLGameDAO implements GameDAO {
             System.out.println("Fetching game with ID: " + gameID);
             stmt.setInt(1, gameID);
 
-            System.out.println("Executing query: " + stmt.toString());
+            System.out.println("Executing query: " + stmt);
 
             rs = stmt.executeQuery();
 
@@ -123,14 +123,6 @@ public class MySQLGameDAO implements GameDAO {
         } catch (SQLException e) {
             System.out.println("Database error in getGame(): " + e.getMessage());
             throw new DataAccessException(e.getMessage());
-        } finally {
-            try {
-                if (rs != null) {rs.close();}
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-                System.out.println("Error closing resources: " + e.getMessage());
-            }
         }
     }
 
@@ -162,14 +154,6 @@ public class MySQLGameDAO implements GameDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error retrieving game list: " + e.getMessage());
-        } finally {
-            try {
-                if (rs != null) {rs.close();}
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-
-            }
         }
         return games;
     }
@@ -194,14 +178,8 @@ public class MySQLGameDAO implements GameDAO {
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error generating game ID: " + e.getMessage());
-        } finally {
-            try {
-                if (rs != null) {rs.close();}
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-            }
         }
+
 
         return nextID;
     }
@@ -254,15 +232,8 @@ public class MySQLGameDAO implements GameDAO {
 
         } catch (SQLException e) {
             throw new DataAccessException("Error joining game: " + e.getMessage());
-        } finally {
-            try {
-                if (rs != null) {rs.close();}
-                if (stmt != null) {stmt.close();}
-                if (conn != null) {conn.close();}
-            } catch (SQLException e) {
-                System.out.println("Failed to close database connection");
-            }
         }
+
     }
 
 
