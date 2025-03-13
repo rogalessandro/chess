@@ -46,6 +46,7 @@ public class MySQLAuthDAOTest {
         assertEquals("testUser", retrievedAuth.username());
     }
 
+
     @Test
     void getAuthNotFound() throws DataAccessException {
         AuthData retrievedAuth = authDAO.getAuth("nonExistentToken");
