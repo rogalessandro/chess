@@ -14,6 +14,7 @@ import java.util.List;
 public class MySQLGameDAO implements GameDAO {
     private final Gson gson = new Gson();
 
+
     @Override
     public void insertGame(GameData game) throws DataAccessException {
         Connection conn = null;
@@ -34,7 +35,6 @@ public class MySQLGameDAO implements GameDAO {
             if (affectedRows == 0) {
                 throw new DataAccessException("Failed to insert game.");
             }
-
 
             rs = stmt.getGeneratedKeys();
             if (rs.next()) {
@@ -67,11 +67,11 @@ public class MySQLGameDAO implements GameDAO {
         try {
             conn = DatabaseManager.getConnection();
 
-
             String sql = "SELECT * FROM games WHERE game_id = ?";
-            stmt = conn.prepareStatement(sql);
-            stmt.setInt(1, gameID);
 
+            stmt = conn.prepareStatement(sql);
+            System.out.println("Fetching game with ID: " + gameID);
+            stmt.setInt(1, gameID);
 
             System.out.println("Executing query: " + stmt.toString());
 
@@ -111,49 +111,110 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public List<GameData> listGames() throws DataAccessException {
+        List<GameData> games = new ArrayList<>();
         Connection conn = null;
         PreparedStatement stmt = null;
-        ResultSet resultSet = null;
-        List<GameData> games = new ArrayList<>();
+        ResultSet rs = null;
+
         try {
             conn = DatabaseManager.getConnection();
-            String sql = "SELECT * FROM games";
+            String sql = "SELECT game_id, game_name, white_username, black_username, game_state FROM games";
             stmt = conn.prepareStatement(sql);
-            resultSet = stmt.executeQuery();
+            rs = stmt.executeQuery();
 
-            while (resultSet.next()) {
-                ChessGame game = gson.fromJson(resultSet.getString("game_state"), ChessGame.class);
-                games.add(new GameData(resultSet.getInt("game_id"), resultSet.getString("white_username"),
-                        resultSet.getString("black_username"), resultSet.getString("game_name"), game));
+            while (rs.next()) {
+                int gameID = rs.getInt("game_id");
+                String gameName = rs.getString("game_name");
+                String whiteUsername = rs.getString("white_username");
+                String blackUsername = rs.getString("black_username");
+                String gameStateJson = rs.getString("game_state");
+
+                whiteUsername = (whiteUsername != null && !whiteUsername.isEmpty()) ? whiteUsername : null;
+                blackUsername = (blackUsername != null && !blackUsername.isEmpty()) ? blackUsername : null;
+
+                ChessGame gameState = new Gson().fromJson(gameStateJson, ChessGame.class);
+                games.add(new GameData(gameID, whiteUsername, blackUsername, gameName, gameState));
             }
-
-            return games;
-
         } catch (SQLException e) {
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException("Error retrieving game list: " + e.getMessage());
         } finally {
             try {
-                if (resultSet != null) resultSet.close();
+                if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
+
             }
         }
+        return games;
     }
 
+
+
     @Override
-    public int generateGameID() {
-        return 1;
+    public int generateGameID() throws DataAccessException {
+        int nextID = 1;
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DatabaseManager.getConnection();
+            String sql = "SELECT MAX(game_id) FROM games";
+            stmt = conn.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                nextID = rs.getInt(1) + 1;
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Error generating game ID: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+            }
+        }
+
+        return nextID;
     }
+
+
+
 
     @Override
     public void joinGame(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException {
         Connection conn = null;
         PreparedStatement stmt = null;
-        try {
+        ResultSet rs = null;
 
+        try {
             conn = DatabaseManager.getConnection();
+
+
+            String selectQuery = "SELECT white_username, black_username FROM games WHERE game_id = ?";
+            stmt = conn.prepareStatement(selectQuery);
+            stmt.setInt(1, gameID);
+            rs = stmt.executeQuery();
+
+            if (!rs.next()) {
+                throw new DataAccessException("Game does not exist");
+            }
+
+            String currentWhite = rs.getString("white_username");
+            String currentBlack = rs.getString("black_username");
+
+
+            if (color == ChessGame.TeamColor.WHITE && currentWhite != null) {
+                throw new DataAccessException("White seat already taken");
+            }
+            if (color == ChessGame.TeamColor.BLACK && currentBlack != null) {
+                throw new DataAccessException("Black seat already taken");
+            }
+
+
             String sql;
             if (color == ChessGame.TeamColor.WHITE) {
                 sql = "UPDATE games SET white_username = ? WHERE game_id = ?";
@@ -164,57 +225,31 @@ public class MySQLGameDAO implements GameDAO {
             stmt = conn.prepareStatement(sql);
             stmt.setString(1, username);
             stmt.setInt(2, gameID);
-            int rowsUpdated = stmt.executeUpdate();
-
-            if (rowsUpdated == 0) {
-                System.out.println("No games");
-                System.out.println(username + " joined game " + gameID + " as " + color);
-            }
+            stmt.executeUpdate();
 
         } catch (SQLException e) {
-            System.out.println("Cant join game");
-            throw new DataAccessException(e.getMessage());
+            throw new DataAccessException("Error joining game: " + e.getMessage());
         } finally {
             try {
+                if (rs != null) rs.close();
                 if (stmt != null) stmt.close();
                 if (conn != null) conn.close();
             } catch (SQLException e) {
-                System.out.println("No se cerro las conexiones, por que?");
+                System.out.println("Failed to close database connection");
             }
         }
     }
 
+
+
     @Override
     public void clear() throws DataAccessException {
-        Connection conn = null;
-        Statement stmt = null;
-
-        try {
-            conn = DatabaseManager.getConnection();
-            stmt = conn.createStatement();
-
-
-            // i cant figure out how else to reset but this works so xd
-            stmt.executeUpdate("SET FOREIGN_KEY_CHECKS = 0;");
-            stmt.executeUpdate("TRUNCATE TABLE games;");
-            stmt.executeUpdate("ALTER TABLE games AUTO_INCREMENT = 1;");
-            stmt.executeUpdate("TRUNCATE TABLE auth_tokens;");
-            stmt.executeUpdate("ALTER TABLE auth_tokens AUTO_INCREMENT = 1;");
-            stmt.executeUpdate("TRUNCATE TABLE users;");
-            stmt.executeUpdate("ALTER TABLE users AUTO_INCREMENT = 1;");
-            stmt.executeUpdate("SET FOREIGN_KEY_CHECKS = 1;");
-
-            System.out.println("RESETED");
-
+        try (Connection conn = DatabaseManager.getConnection();
+             Statement stmt = conn.createStatement()) {
+            stmt.executeUpdate("DELETE FROM games");
+            stmt.executeUpdate("ALTER TABLE games AUTO_INCREMENT = 1");
         } catch (SQLException e) {
-            throw new DataAccessException("Error resetting database: " + e.getMessage());
-        } finally {
-            try {
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
-            } catch (SQLException e) {
-                System.out.println("Error closing connection: " + e.getMessage());
-            }
+            throw new DataAccessException("Error clearing games: " + e.getMessage());
         }
     }
 

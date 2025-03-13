@@ -15,11 +15,13 @@ public interface GameDAO {
 
     List<GameData> listGames() throws DataAccessException;
 
-    int generateGameID();
+    int generateGameID() throws DataAccessException;
 
     void joinGame(int gameID, String username, ChessGame.TeamColor color) throws DataAccessException;
 
     void clear() throws DataAccessException;
+
+
 }
 
 

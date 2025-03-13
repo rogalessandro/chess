@@ -48,16 +48,12 @@ public class MySQLAuthDAO implements AuthDAO {
         try {
             conn = DatabaseManager.getConnection();
 
-
             String sql = "SELECT users.username FROM auth_tokens JOIN users ON auth_tokens.user_id = users.id WHERE token = ?";
             stmt = conn.prepareStatement(sql);
 
-
             stmt.setString(1, token);
 
-
             resultSet = stmt.executeQuery();
-
 
             if (resultSet.next()) {
                 return new AuthData(token, resultSet.getString("username"));

@@ -14,6 +14,13 @@ public class LogoutService {
         if (authToken == null || authToken.isBlank()) {
             throw new DataAccessException("No hay Token");
         }
+
+
+        if (authDAO.getAuth(authToken) == null) {
+            throw new DataAccessException("Token not found");
+        }
+
         authDAO.deleteAuth(authToken);
     }
+
 }
