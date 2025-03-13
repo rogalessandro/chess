@@ -162,6 +162,7 @@ public class ChessGame {
 
                     if (checkIfPawn(piece, pieceLoc, moves, kingLocation)) {
                         return true;
+
                     }
                 }
             }
