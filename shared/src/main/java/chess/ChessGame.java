@@ -236,28 +236,10 @@ public class ChessGame {
                 ChessPosition pieceLoc = new ChessPosition(i,j);
                 ChessPiece piece = tablero.getPiece(pieceLoc);
 
-                if(piece != null && piece.getTeamColor() == piezaTurno){
-                    Collection<ChessMove> moves = piece.pieceMoves(tablero, pieceLoc);
-
-
-                    for(ChessMove move : moves){
-
-                        ChessPiece piezaAtacada = tablero.getPiece(move.getEndPosition());
-
-                        tablero.addPiece(move.getEndPosition(), piece);
-                        tablero.addPiece(move.getStartPosition(), null);
-
-                        boolean isCheck = isInCheck(teamColor);
-
-                        tablero.addPiece(pieceLoc,piece);
-                        tablero.addPiece(move.getEndPosition(), piezaAtacada);
-
-
-                        if(!isCheck){return false;}
-
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    if (canMoveWithoutCheck(piece, pieceLoc, teamColor, tablero)) {
+                        return false;
                     }
-
-
                 }
             }
         }
