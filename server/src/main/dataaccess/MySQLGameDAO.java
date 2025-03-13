@@ -65,7 +65,7 @@ public class MySQLGameDAO implements GameDAO {
             stmt = conn.prepareStatement(sqlBuscarUsuario);
 
             stmt.setInt(1, gameID);
-            stmt.executeQuery();
+            resultSet = stmt.executeQuery();
 
             if(resultSet.next()){
                 ChessGame game = gson.fromJson(resultSet.getString("game_state"), ChessGame.class);

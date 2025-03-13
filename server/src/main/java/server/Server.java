@@ -1,5 +1,8 @@
 package server;
 
+import dataaccess.MySQLAuthDAO;
+import dataaccess.MySQLGameDAO;
+import dataaccess.MySQLUserDAO;
 import service.*;
 import server.handlers.ListGamesHandler;
 import servicefiles.ListGamesService;
@@ -26,9 +29,9 @@ public class Server {
         Spark.staticFiles.location("web");
 
         //DOA instances
-        UserDAO userDAO = new MemoryUserDAO();
-        GameDAO gameDAO = new MemoryGameDAO();
-        AuthDAO authDAO = new MemoryAuthDAO();
+        UserDAO userDAO = new MySQLUserDAO();
+        GameDAO gameDAO = new MySQLGameDAO();
+        AuthDAO authDAO = new MySQLAuthDAO();
 
         //Service using the shared DAO as TA said to create here
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
