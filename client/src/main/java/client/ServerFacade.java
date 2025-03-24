@@ -155,6 +155,31 @@ public class ServerFacade {
     }
 
 
+    public void joinGame(String authToken, int gameID, ChessGame.TeamColor color) throws Exception {
+        URL url = new URL(serverUrl + "/game");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("PUT");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Authorization", authToken);
+        connection.setDoOutput(true);
 
+        var requestBody = Map.of(
+                "gameID", gameID,
+                "playerColor", color.name() // either "WHITE" or "BLACK"
+        );
+
+        try (OutputStream os = connection.getOutputStream();
+             OutputStreamWriter writer = new OutputStreamWriter(os)) {
+            gson.toJson(requestBody, writer);
+            writer.flush();
+        }
+
+        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            InputStream errorStream = connection.getErrorStream();
+            String errorMessage = new BufferedReader(new InputStreamReader(errorStream))
+                    .lines().reduce("", (a, b) -> a + b);
+            throw new RuntimeException("Join game failed: " + errorMessage);
+        }
+    }
 
 }
