@@ -53,6 +53,37 @@ public class ServerFacade {
     }
 
 
+    public AuthData login(String username, String password) throws Exception {
+        var requestBody = Map.of(
+                "username", username,
+                "password", password
+        );
+
+        URL url = new URL(serverUrl + "/session");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setDoOutput(true);
+
+        try (OutputStream os = connection.getOutputStream();
+             OutputStreamWriter writer = new OutputStreamWriter(os)) {
+            gson.toJson(requestBody, writer);
+            writer.flush();
+        }
+
+        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            String error = new BufferedReader(new InputStreamReader(connection.getErrorStream()))
+                    .lines().reduce("", (a, b) -> a + b);
+            throw new RuntimeException("Error: " + error);
+        }
+
+        try (InputStream responseBody = connection.getInputStream()) {
+            var map = gson.fromJson(new InputStreamReader(responseBody), Map.class);
+            return new AuthData((String) map.get("authToken"), (String) map.get("username"));
+        }
+    }
+
+
 
 
 }
