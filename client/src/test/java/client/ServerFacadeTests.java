@@ -69,6 +69,14 @@ public class ServerFacadeTests {
     }
 
 
+    @Test
+    void logoutPositive() throws Exception {
+
+        AuthData auth = facade.register("loggy", "pw", "loggy@email.com");
+
+
+        assertDoesNotThrow(() -> facade.logout(auth.authToken()));
+    }
 
 
 
