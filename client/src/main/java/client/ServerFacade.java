@@ -131,6 +131,30 @@ public class ServerFacade {
     }
 
 
+    public List<GameData> listGames(String authToken) throws Exception {
+        URL url = new URL(serverUrl + "/game");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", authToken);
+
+        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            InputStream errorStream = connection.getErrorStream();
+            String errorMessage = new BufferedReader(new InputStreamReader(errorStream))
+                    .lines()
+                    .reduce("", (a, b) -> a + b);
+            throw new RuntimeException("List games failed: " + errorMessage);
+        }
+
+        try (InputStream responseBody = connection.getInputStream();
+             InputStreamReader reader = new InputStreamReader(responseBody)) {
+            Map response = gson.fromJson(reader, Map.class);
+            var gamesJson = gson.toJson(response.get("games"));
+            GameData[] games = gson.fromJson(gamesJson, GameData[].class);
+            return List.of(games);
+        }
+    }
+
+
 
 
 }
