@@ -102,6 +102,35 @@ public class ServerFacade {
     }
 
 
+    public GameData createGame(String authToken, String gameName) throws Exception {
+        URL url = new URL(serverUrl + "/game");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/json");
+        connection.setRequestProperty("Authorization", authToken);
+        connection.setDoOutput(true);
+
+
+        try (OutputStream os = connection.getOutputStream();
+             OutputStreamWriter writer = new OutputStreamWriter(os)) {
+            gson.toJson(Map.of("gameName", gameName), writer);
+            writer.flush();
+        }
+
+        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+            InputStream errorStream = connection.getErrorStream();
+            String errorMessage = new BufferedReader(new InputStreamReader(errorStream))
+                    .lines().reduce("", (acc, line) -> acc + line);
+            throw new RuntimeException("Create game failed: " + errorMessage);
+        }
+
+        try (InputStream responseBody = connection.getInputStream();
+             InputStreamReader reader = new InputStreamReader(responseBody)) {
+            return gson.fromJson(reader, GameData.class);
+        }
+    }
+
+
 
 
 }
