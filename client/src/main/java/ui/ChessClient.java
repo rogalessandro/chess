@@ -17,7 +17,6 @@ public class ChessClient {
     }
 
     public void run() {
-        System.out.println("Welcome to 240 Chess!");
         while (true) {
             System.out.print(prompt());
             String line = scanner.nextLine().trim();
