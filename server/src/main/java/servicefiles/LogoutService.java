@@ -12,12 +12,12 @@ public class LogoutService {
 
     public void logout(String authToken) throws DataAccessException {
         if (authToken == null || authToken.isBlank()) {
-            throw new DataAccessException("No hay Token");
+            throw new DataAccessException("Error: No hay Token");
         }
 
 
         if (authDAO.getAuth(authToken) == null) {
-            throw new DataAccessException("Token not found");
+            throw new DataAccessException("Error: Token not found");
         }
 
         authDAO.deleteAuth(authToken);

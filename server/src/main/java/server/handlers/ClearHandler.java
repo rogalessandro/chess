@@ -27,7 +27,7 @@ public class ClearHandler implements Route {
 
         } catch (Exception e) {
             res.status(500);
-            return gson.toJson(Map.of("message", "Error clearing database: " + e.getMessage()));
+            return gson.toJson(Map.of("message", "Error: clearing database: " + e.getMessage()));
         }
     }
 }

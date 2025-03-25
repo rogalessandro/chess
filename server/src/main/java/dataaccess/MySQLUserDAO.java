@@ -31,7 +31,7 @@ public class MySQLUserDAO implements UserDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error creating users table: " + e.getMessage());
+            throw new DataAccessException("Error: creating users table: " + e.getMessage());
         }
     }
 
@@ -82,7 +82,7 @@ public class MySQLUserDAO implements UserDAO {
             }
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error retrieving user: " + e.getMessage());
+            throw new DataAccessException("Error: retrieving user: " + e.getMessage());
         }
     }
 

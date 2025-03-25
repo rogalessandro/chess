@@ -18,12 +18,12 @@ public class ListGamesService {
 
     public List<GameData> listGames(String authToken) throws DataAccessException {
         if (authToken == null || authToken.isBlank()) {
-            throw new DataAccessException("No auth token");
+            throw new DataAccessException("Error: No auth token");
         }
 
         AuthData authData = authDAO.getAuth(authToken);
         if (authData == null) {
-            throw new DataAccessException("Unauthorized");
+            throw new DataAccessException("Error: Unauthorized");
         }
 
         return gameDAO.listGames();

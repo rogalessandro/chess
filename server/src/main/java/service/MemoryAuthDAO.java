@@ -18,7 +18,7 @@ public class MemoryAuthDAO implements AuthDAO {
 
     public void deleteAuth(String authToken) throws DataAccessException {
         if (!authTokens.containsKey(authToken)) {
-            throw new DataAccessException("Invalid auth token");
+            throw new DataAccessException("Error: Invalid auth token");
         }
         authTokens.remove(authToken);
     }

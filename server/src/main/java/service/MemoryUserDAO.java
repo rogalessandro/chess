@@ -9,7 +9,7 @@ public class MemoryUserDAO implements UserDAO {
 
     public void insertUser(UserData user) throws DataAccessException{
         if (users.containsKey(user.username())) {
-            throw new DataAccessException("Username exists");
+            throw new DataAccessException("Error: Username exists");
         }
         users.put(user.username(), user);
     }

@@ -21,7 +21,7 @@ public class UserService {
     public String registerUser(String username, String password, String email) throws DataAccessException {
 
         if (userDAO.getUser(username) != null) {
-            throw new UserAlreadyExistsException("El usuario ya existe");
+            throw new UserAlreadyExistsException("Error: El usuario ya existe");
         }
 
         UserData nuevoUsuario = new UserData(username, password, email);

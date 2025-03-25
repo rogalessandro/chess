@@ -28,7 +28,7 @@ public class MySQLAuthDAO implements AuthDAO {
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.executeUpdate();
         } catch (SQLException e) {
-            throw new DataAccessException("Error creating auth_tokens table: " + e.getMessage());
+            throw new DataAccessException("Error: creating auth_tokens table: " + e.getMessage());
         }
     }
 
