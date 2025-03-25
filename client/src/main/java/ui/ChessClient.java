@@ -2,7 +2,9 @@ package ui;
 
 import chess.ChessGame;
 import client.ServerFacade;
+import model.GameData;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -88,12 +90,8 @@ public class ChessClient {
             case "list" -> {
                 var games = facade.listGames(authToken);
                 System.out.println("Available Games:");
-                for (int i = 0; i < games.size(); i++) {
-                    var g = games.get(i);
-                    System.out.printf("%d. %s | White: %s | Black: %s%n", i + 1, g.gameName(),
-                            g.whiteUsername() != null ? g.whiteUsername() : "?",
-                            g.blackUsername() != null ? g.blackUsername() : "?");
-                }
+                printGameList(games);
+
             }
             case "play" -> {
                 var games = facade.listGames(authToken);
@@ -103,12 +101,8 @@ public class ChessClient {
                 }
 
                 System.out.println("Choose a game to join:");
-                for (int i = 0; i < games.size(); i++) {
-                    var g = games.get(i);
-                    System.out.printf("%d. %s | White: %s | Black: %s%n", i + 1, g.gameName(),
-                            g.whiteUsername() != null ? g.whiteUsername() : "?",
-                            g.blackUsername() != null ? g.blackUsername() : "?");
-                }
+                printGameList(games);
+
 
                 System.out.print("Enter game number: ");
                 int choice = Integer.parseInt(scanner.nextLine()) - 1;
@@ -168,6 +162,18 @@ public class ChessClient {
             default -> System.out.println("Unknown command. Type 'help'");
         }
     }
+
+    private void printGameList(List<GameData> games) {
+        for (int i = 0; i < games.size(); i++) {
+            var g = games.get(i);
+            System.out.printf("%d. %s | White: %s | Black: %s%n",
+                    i + 1,
+                    g.gameName(),
+                    g.whiteUsername() != null ? g.whiteUsername() : "?",
+                    g.blackUsername() != null ? g.blackUsername() : "?");
+        }
+    }
+
 
     private void printPreLoginHelp() {
         System.out.println("""
