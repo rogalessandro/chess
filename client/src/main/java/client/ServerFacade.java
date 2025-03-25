@@ -28,6 +28,7 @@ public class ServerFacade {
         URL url = new URL(serverUrl + "/user");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("POST");
+
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setDoOutput(true);
 
