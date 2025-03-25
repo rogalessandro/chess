@@ -138,12 +138,8 @@ public class ChessClient {
                 }
 
                 System.out.println("Choose a game to observe:");
-                for (int i = 0; i < games.size(); i++) {
-                    var g = games.get(i);
-                    System.out.printf("%d. %s | White: %s | Black: %s%n", i + 1, g.gameName(),
-                            g.whiteUsername() != null ? g.whiteUsername() : "?",
-                            g.blackUsername() != null ? g.blackUsername() : "?");
-                }
+                printGameList(games);
+
 
                 System.out.print("Enter game number: ");
                 int choice = Integer.parseInt(scanner.nextLine()) - 1;
