@@ -39,7 +39,18 @@ public class ServerFacade {
         }
 
 
-        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+        handleHttpError(connection);
+
+
+        return parseAuthData(connection);
+
+    }
+
+
+    private void handleHttpError(HttpURLConnection connection) throws IOException {
+        int responseCode = connection.getResponseCode();
+
+        if (responseCode != HttpURLConnection.HTTP_OK) {
             InputStream errorStream = connection.getErrorStream();
             String errorJson = new BufferedReader(new InputStreamReader(errorStream))
                     .lines()
@@ -48,13 +59,20 @@ public class ServerFacade {
             var errorMap = gson.fromJson(errorJson, Map.class);
             String msg = (String) errorMap.get("message");
 
-            if (msg.startsWith("Error: ")) {
+            if (msg != null && msg.startsWith("Error: ")) {
                 msg = msg.substring(7);
             }
 
-            throw new RuntimeException(msg);
+            throw new RuntimeException(msg != null ? msg : "Unknown error");
         }
+    }
 
+
+
+
+
+
+    private AuthData parseAuthData(HttpURLConnection connection) throws IOException {
         try (InputStream responseBody = connection.getInputStream()) {
             var map = gson.fromJson(new InputStreamReader(responseBody), Map.class);
             return new AuthData((String) map.get("authToken"), (String) map.get("username"));
@@ -87,10 +105,8 @@ public class ServerFacade {
             throw new RuntimeException((String) errorMap.get("message"));
         }
 
-        try (InputStream responseBody = connection.getInputStream()) {
-            var map = gson.fromJson(new InputStreamReader(responseBody), Map.class);
-            return new AuthData((String) map.get("authToken"), (String) map.get("username"));
-        }
+        return parseAuthData(connection);
+
     }
 
 
@@ -102,21 +118,8 @@ public class ServerFacade {
 
         int responseCode = connection.getResponseCode();
 
-        if (responseCode != HttpURLConnection.HTTP_OK) {
-            InputStream errorStream = connection.getErrorStream();
-            String errorJson = new BufferedReader(new InputStreamReader(errorStream))
-                    .lines()
-                    .reduce("", (acc, line) -> acc + line);
+        handleHttpError(connection);
 
-            var errorMap = gson.fromJson(errorJson, Map.class);
-            String msg = (String) errorMap.get("message");
-
-            if (msg.startsWith("Error: ")) {
-                msg = msg.substring(7);
-            }
-
-            throw new RuntimeException(msg);
-        }
 
     }
 
