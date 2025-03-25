@@ -12,6 +12,7 @@ public class Main {
         int port = server.run(8080);
 
         ServerFacade facade = new ServerFacade(port);
+
         ChessClient client = new ChessClient(facade);
         client.run();
     }
