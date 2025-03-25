@@ -165,7 +165,7 @@ public class ServerFacade {
 
         var requestBody = Map.of(
                 "gameID", gameID,
-                "playerColor", color.name() // either "WHITE" or "BLACK"
+                "playerColor", color.name()
         );
 
         try (OutputStream os = connection.getOutputStream();
