@@ -130,6 +130,7 @@ public class ChessClient {
                 System.out.println("Joined game: " + game.gameName() + " as " + color);
                 BoardPrinter.drawBoard(new ChessGame(), color);
             }
+
             case "observe" -> {
                 var games = facade.listGames(authToken);
                 if (games.isEmpty()) {
