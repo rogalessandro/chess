@@ -53,14 +53,12 @@ public class JoinGameHandler implements Route {
                 res.status(400);
                 return gson.toJson(Map.of("message", "Error: bad request - bad playerColor"));
             }
-            //#####
             joinGameService.joinGame(authToken, gameID, color);
 
             res.status(200);
             return "{}";
 
         } catch (DataAccessException e) {
-            System.err.println("JoinGame Failed: " + e.getMessage());
             String errorMsg = e.getMessage();
 
             if (errorMsg.contains("Unauthorized")) {

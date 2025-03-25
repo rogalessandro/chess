@@ -21,7 +21,7 @@ public class AuthService {
         UserData user = userDAO.getUser(username);
 
         if (user == null || !BCrypt.checkpw(password, user.password())) {
-            throw new DataAccessException("El usuario esta mal");
+            throw new DataAccessException("The user or password esta mal");
         }
 
         String authToken = UUID.randomUUID().toString();

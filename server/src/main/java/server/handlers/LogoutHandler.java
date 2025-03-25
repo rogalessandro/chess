@@ -26,7 +26,7 @@ public class LogoutHandler implements Route {
         // sin permiso
         } catch (DataAccessException e) {
             res.status(401);
-            return gson.toJson(new Message("Error: " + e.getMessage()));
+            return gson.toJson(new Message((String) e.getMessage()));
         }
     }
 

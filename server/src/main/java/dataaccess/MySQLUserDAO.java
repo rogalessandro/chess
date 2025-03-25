@@ -51,10 +51,7 @@ public class MySQLUserDAO implements UserDAO {
 
             stmt.executeUpdate();
 
-            System.out.println("Usuario: " + user.username() + " insertado");
-
         } catch (SQLException e) {
-            System.out.println("No se inserto el usuario, paso algo");
             throw new DataAccessException(e.getMessage());
         }
     }

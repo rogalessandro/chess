@@ -37,7 +37,6 @@ public class JoinGameService {
             gameDAO.joinGame(gameID, authData.username(), color);
             System.out.println("User " + authData.username() + " successfully joined game " + gameID + " as " + color);
         } catch (DataAccessException e) {
-            System.err.println("JoinGame Error: " + e.getMessage());
             throw e;
         }
     }

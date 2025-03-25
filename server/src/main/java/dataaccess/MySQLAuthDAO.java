@@ -45,10 +45,7 @@ public class MySQLAuthDAO implements AuthDAO {
             stmt.setString(2, authData.username());
             stmt.executeUpdate();
 
-            System.out.println("Auth token: " + authData.username());
-
         } catch (SQLException e) {
-            System.out.println("No se inserto el usuario, paso algo");
             throw new DataAccessException(e.getMessage());
         }
     }
@@ -91,8 +88,6 @@ public class MySQLAuthDAO implements AuthDAO {
             int rowsAffected = stmt.executeUpdate();
             if (rowsAffected == 0) {
                 System.out.println("Intento borrar, No Token encontrado");
-            } else {
-                System.out.println("Borrado con exito");
             }
         } catch (SQLException e) {
             throw new DataAccessException(e.getMessage());

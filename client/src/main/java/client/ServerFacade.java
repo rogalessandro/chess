@@ -40,10 +40,18 @@ public class ServerFacade {
 
         if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
             InputStream errorStream = connection.getErrorStream();
-            String errorMessage = new BufferedReader(new InputStreamReader(errorStream))
+            String errorJson = new BufferedReader(new InputStreamReader(errorStream))
                     .lines()
                     .reduce("", (acc, line) -> acc + line);
-            throw new RuntimeException("Error: " + errorMessage);
+
+            var errorMap = gson.fromJson(errorJson, Map.class);
+            String msg = (String) errorMap.get("message");
+
+            if (msg.startsWith("Error: ")) {
+                msg = msg.substring(7);
+            }
+
+            throw new RuntimeException(msg);
         }
 
         try (InputStream responseBody = connection.getInputStream()) {
@@ -72,9 +80,10 @@ public class ServerFacade {
         }
 
         if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            String error = new BufferedReader(new InputStreamReader(connection.getErrorStream()))
+            String errorJson = new BufferedReader(new InputStreamReader(connection.getErrorStream()))
                     .lines().reduce("", (a, b) -> a + b);
-            throw new RuntimeException("Error: " + error);
+            Map errorMap = gson.fromJson(errorJson, Map.class);
+            throw new RuntimeException((String) errorMap.get("message"));
         }
 
         try (InputStream responseBody = connection.getInputStream()) {
@@ -176,10 +185,20 @@ public class ServerFacade {
 
         if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
             InputStream errorStream = connection.getErrorStream();
-            String errorMessage = new BufferedReader(new InputStreamReader(errorStream))
+            String errorJson = new BufferedReader(new InputStreamReader(errorStream))
                     .lines().reduce("", (a, b) -> a + b);
-            throw new RuntimeException("Join game failed: " + errorMessage);
+
+            var errorMap = gson.fromJson(errorJson, Map.class);
+            String msg = (String) errorMap.get("message");
+
+            if (msg.startsWith("Error: ")) {
+                msg = msg.substring(7);
+            }
+
+            throw new RuntimeException(msg);
+
         }
+
     }
 
 }

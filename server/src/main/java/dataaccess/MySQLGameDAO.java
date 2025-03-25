@@ -64,7 +64,6 @@ public class MySQLGameDAO implements GameDAO {
             rs = stmt.getGeneratedKeys();
             if (rs.next()) {
                 int generatedId = rs.getInt(1);
-                System.out.println("Game inserted with ID: " + generatedId);
             } else {
                 throw new DataAccessException("Failed to retrieve game ID.");
             }
@@ -95,10 +94,7 @@ public class MySQLGameDAO implements GameDAO {
             String sql = "SELECT * FROM games WHERE game_id = ?";
 
             stmt = conn.prepareStatement(sql);
-            System.out.println("Fetching game with ID: " + gameID);
             stmt.setInt(1, gameID);
-
-            System.out.println("Executing query: " + stmt);
 
             rs = stmt.executeQuery();
 
@@ -231,7 +227,7 @@ public class MySQLGameDAO implements GameDAO {
             stmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new DataAccessException("Error joining game: " + e.getMessage());
+
         }
 
     }
