@@ -79,6 +79,41 @@ public class ServerFacadeTests {
     }
 
 
+    @Test
+    void createGamePositive() throws Exception {
+        AuthData auth = facade.register("gameplayer", "pw", "player@email.com");
+        GameData game = facade.createGame(auth.authToken(), "El juegazo");
+
+        assertNotNull(game);
+        assertEquals("El juegazo", game.gameName());
+        assertTrue(game.gameID() > 0);
+    }
+
+
+    @Test
+    void listGamesPositive() throws Exception {
+        var auth = facade.register("viewer", "pass", "viewer@email.com");
+
+        facade.createGame(auth.authToken(), "Uno");
+        facade.createGame(auth.authToken(), "Dos");
+
+        var games = facade.listGames(auth.authToken());
+
+        assertNotNull(games);
+        assertEquals(2, games.size());
+        assertEquals("Uno", games.get(0).gameName());
+        assertEquals("Dos", games.get(1).gameName());
+    }
+
+
+    @Test
+    void joinGamePositive() throws Exception {
+        var auth = facade.register("player", "pass", "player@email.com");
+        var game = facade.createGame(auth.authToken(), "Team Game");
+
+        assertDoesNotThrow(() -> facade.joinGame(auth.authToken(), game.gameID(), ChessGame.TeamColor.WHITE));
+    }
+
 
 
     @Test
