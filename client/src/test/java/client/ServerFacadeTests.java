@@ -57,7 +57,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void registerNegative_DuplicateUsername() throws Exception {
+    void registerNegativeDuplicateUsername() throws Exception {
         facade.register("dupe", "123", "dupe@email.com");
 
         var exception = assertThrows(RuntimeException.class, () -> {
@@ -82,7 +82,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void loginNegative_WrongPassword() throws Exception {
+    void loginNegativeWrongPassword() throws Exception {
         facade.register("juan", "correctpw", "juan@email.com");
 
         var exception = assertThrows(RuntimeException.class, () -> {
@@ -104,7 +104,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void logoutNegative_InvalidToken() {
+    void logoutNegativeInvalidToken() {
         var exception = assertThrows(RuntimeException.class, () -> {
             facade.logout("invalid-token-123");
         });
@@ -126,7 +126,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void createGameNegative_InvalidToken() {
+    void createGameNegativeInvalidToken() {
         var exception = assertThrows(RuntimeException.class, () -> {
             facade.createGame("bad-token", "NoGame");
         });
@@ -152,7 +152,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void listGamesNegative_InvalidToken() {
+    void listGamesNegativeInvalidToken() {
         var exception = assertThrows(RuntimeException.class, () -> {
             facade.listGames("bad-token");
         });
@@ -171,7 +171,7 @@ public class ServerFacadeTests {
     }
 
     @Test
-    void joinGameNegative_SeatTaken() throws Exception {
+    void joinGameNegativeSeatTaken() throws Exception {
         var auth1 = facade.register("p1", "pw", "p1@email.com");
         var auth2 = facade.register("p2", "pw", "p2@email.com");
 
