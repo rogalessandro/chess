@@ -56,6 +56,19 @@ public class ServerFacadeTests {
         assertTrue(auth.authToken().length() > 10);
     }
 
+    @Test
+    void registerNegative_DuplicateUsername() throws Exception {
+        facade.register("dupe", "123", "dupe@email.com");
+
+        var exception = assertThrows(RuntimeException.class, () -> {
+            facade.register("dupe", "123", "different@email.com");
+        });
+
+        assertTrue(exception.getMessage().toLowerCase().contains("el usuario ya existe"));
+    }
+
+
+
 
 
     @Test
@@ -68,6 +81,18 @@ public class ServerFacadeTests {
         assertTrue(auth.authToken().length() > 5);
     }
 
+    @Test
+    void loginNegative_WrongPassword() throws Exception {
+        facade.register("juan", "correctpw", "juan@email.com");
+
+        var exception = assertThrows(RuntimeException.class, () -> {
+            facade.login("juan", "wrongpw");
+        });
+
+        assertTrue(exception.getMessage().toLowerCase().contains("password"));
+    }
+
+
 
     @Test
     void logoutPositive() throws Exception {
@@ -77,6 +102,17 @@ public class ServerFacadeTests {
 
         assertDoesNotThrow(() -> facade.logout(auth.authToken()));
     }
+
+    @Test
+    void logoutNegative_InvalidToken() {
+        var exception = assertThrows(RuntimeException.class, () -> {
+            facade.logout("invalid-token-123");
+        });
+        System.out.println("Logout failed: " + exception.getMessage());
+        assertTrue(exception.getMessage().toLowerCase().contains("token not found"));
+    }
+
+
 
 
     @Test
@@ -88,6 +124,16 @@ public class ServerFacadeTests {
         assertEquals("El juegazo", game.gameName());
         assertTrue(game.gameID() > 0);
     }
+
+    @Test
+    void createGameNegative_InvalidToken() {
+        var exception = assertThrows(RuntimeException.class, () -> {
+            facade.createGame("bad-token", "NoGame");
+        });
+
+        assertTrue(exception.getMessage().toLowerCase().contains("unauthorized"));
+    }
+
 
 
     @Test
@@ -105,6 +151,16 @@ public class ServerFacadeTests {
         assertEquals("Dos", games.get(1).gameName());
     }
 
+    @Test
+    void listGamesNegative_InvalidToken() {
+        var exception = assertThrows(RuntimeException.class, () -> {
+            facade.listGames("bad-token");
+        });
+
+        assertTrue(exception.getMessage().toLowerCase().contains("unauthorized"));
+    }
+
+
 
     @Test
     void joinGamePositive() throws Exception {
@@ -113,6 +169,22 @@ public class ServerFacadeTests {
 
         assertDoesNotThrow(() -> facade.joinGame(auth.authToken(), game.gameID(), ChessGame.TeamColor.WHITE));
     }
+
+    @Test
+    void joinGameNegative_SeatTaken() throws Exception {
+        var auth1 = facade.register("p1", "pw", "p1@email.com");
+        var auth2 = facade.register("p2", "pw", "p2@email.com");
+
+        var game = facade.createGame(auth1.authToken(), "The Showdown");
+        facade.joinGame(auth1.authToken(), game.gameID(), ChessGame.TeamColor.BLACK);
+
+        var exception = assertThrows(RuntimeException.class, () -> {
+            facade.joinGame(auth2.authToken(), game.gameID(), ChessGame.TeamColor.BLACK);
+        });
+
+        assertTrue(exception.getMessage().toLowerCase().contains("taken"));
+    }
+
 
 
 

@@ -103,11 +103,20 @@ public class ServerFacade {
 
         if (responseCode != HttpURLConnection.HTTP_OK) {
             InputStream errorStream = connection.getErrorStream();
-            String errorMessage = new BufferedReader(new InputStreamReader(errorStream))
+            String errorJson = new BufferedReader(new InputStreamReader(errorStream))
                     .lines()
                     .reduce("", (acc, line) -> acc + line);
-            throw new RuntimeException("Logout failed: " + errorMessage);
+
+            var errorMap = gson.fromJson(errorJson, Map.class);
+            String msg = (String) errorMap.get("message");
+
+            if (msg.startsWith("Error: ")) {
+                msg = msg.substring(7);
+            }
+
+            throw new RuntimeException(msg);
         }
+
     }
 
 
