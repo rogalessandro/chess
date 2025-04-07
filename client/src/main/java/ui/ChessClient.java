@@ -74,7 +74,6 @@ public class ChessClient {
     private void handlePostLogin(String command, String[] parts) throws Exception {
         switch (command) {
             case "help" -> printPostLoginHelp();
-            case "quit" -> System.exit(0);
             case "logout" -> {
                 facade.logout(authToken);
                 this.authToken = null;
@@ -191,7 +190,6 @@ public class ChessClient {
             - logout     Log out of your account
             - play       Join a game and play
             - observe    Observe a game
-            - quit       Exit the app
         """);
     }
 }

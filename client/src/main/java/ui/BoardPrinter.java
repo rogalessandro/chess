@@ -35,7 +35,7 @@ public class BoardPrinter {
                 ChessPosition pos = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(pos);
 
-                boolean isLightSquare = (row + col) % 2 == 0;
+                boolean isLightSquare = (row + col) % 2 != 0;
 
                 String bgColor = isLightSquare
                         ? EscapeSequences.SET_BG_COLOR_LIGHT_GREY

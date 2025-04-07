@@ -60,7 +60,7 @@ public class ServerFacade {
             String msg = (String) errorMap.get("message");
 
             if (msg != null && msg.startsWith("Error: ")) {
-                msg = msg.substring(7);
+                msg = msg.substring(15);
             }
 
             throw new RuntimeException(msg != null ? msg : "Unknown error");
@@ -98,12 +98,7 @@ public class ServerFacade {
             writer.flush();
         }
 
-        if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
-            String errorJson = new BufferedReader(new InputStreamReader(connection.getErrorStream()))
-                    .lines().reduce("", (a, b) -> a + b);
-            Map errorMap = gson.fromJson(errorJson, Map.class);
-            throw new RuntimeException((String) errorMap.get("message"));
-        }
+        handleHttpError(connection);
 
         return parseAuthData(connection);
 
