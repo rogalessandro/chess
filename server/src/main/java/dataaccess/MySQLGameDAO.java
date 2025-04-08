@@ -38,6 +38,21 @@ public class MySQLGameDAO implements GameDAO {
         }
     }
 
+    public void updateGame(int gameID, ChessGame updatedGame) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String sql = "UPDATE games SET game_state = ? WHERE game_id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                String json = gson.toJson(updatedGame);
+                stmt.setString(1, json);
+                stmt.setInt(2, gameID);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to update game: " + e.getMessage());
+        }
+    }
+
+
 
 
     @Override
@@ -178,6 +193,27 @@ public class MySQLGameDAO implements GameDAO {
 
 
         return nextID;
+    }
+
+
+    public void removePlayer(int gameID, String username) throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String sql = """
+            UPDATE games
+            SET white_username = CASE WHEN white_username = ? THEN NULL ELSE white_username END,
+                black_username = CASE WHEN black_username = ? THEN NULL ELSE black_username END
+            WHERE game_id = ?
+        """;
+
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, username);
+                stmt.setString(2, username);
+                stmt.setInt(3, gameID);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Failed to remove player: " + e.getMessage());
+        }
     }
 
 

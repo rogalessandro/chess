@@ -16,5 +16,6 @@
     <orderEntry type="library" name="java" level="project" />
     <orderEntry type="library" name="java1" level="project" />
     <orderEntry type="library" name="glassfish.tyrus.bundles.standalone.client" level="project" />
+    <orderEntry type="library" name="glassfish.tyrus.server" level="project" />
   </component>
 </module>

@@ -16,7 +16,7 @@ public class JoinGameService {
         this.authDAO = authDAO;
     }
 
-    public void joinGame(String authToken, int gameID, ChessGame.TeamColor color) throws DataAccessException {
+    public GameData joinGame(String authToken, int gameID, ChessGame.TeamColor color) throws DataAccessException {
         if (authToken == null || authToken.isBlank()) {
             throw new DataAccessException("Missing auth token");
         }
@@ -33,11 +33,8 @@ public class JoinGameService {
             throw new DataAccessException("Error: Game does not exist");
         }
 
-        try {
-            gameDAO.joinGame(gameID, authData.username(), color);
-            System.out.println("User " + authData.username() + " successfully joined game " + gameID + " as " + color);
-        } catch (DataAccessException e) {
-            throw e;
-        }
+        gameDAO.joinGame(gameID, authData.username(), color);
+        return gameDAO.getGame(gameID);
     }
+
 }
