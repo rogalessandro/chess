@@ -2,40 +2,20 @@ package server;
 
 import dataaccess.MySQLAuthDAO;
 import dataaccess.MySQLGameDAO;
-import dataaccess.DatabaseManager;
 import dataaccess.MySQLUserDAO;
 import service.*;
-import server.handlers.ListGamesHandler;
-import servicefiles.ListGamesService;
-import server.handlers.ClearHandler;
-import servicefiles.ClearService;
-import server.handlers.RegisterHandler;
-import servicefiles.UserService;
-import server.handlers.LoginHandler;
-import server.handlers.LogoutHandler;
-import server.handlers.JoinGameHandler;
-import servicefiles.JoinGameService;
-import servicefiles.LogoutService;
-import server.handlers.CreateGameHandler;
-import servicefiles.CreateGameService;
-import servicefiles.AuthService;
-import spark.*;
-
-
-
-
+import server.handlers.*;
+import servicefiles.*;
+import spark.Spark;
+import websocket.WebSocketHandler;
 
 public class Server {
 
-
     public int run(int desiredPort) {
-
         Spark.port(desiredPort);
-
         Spark.staticFiles.location("web");
 
-        //DOA instances
-
+        // DAO setup
         UserDAO userDAO;
         GameDAO gameDAO;
         AuthDAO authDAO;
@@ -48,13 +28,12 @@ public class Server {
             throw new RuntimeException("Error initializing DAOs: " + e.getMessage());
         }
 
-        //Service using the shared DAO as TA said to create here
+        // WebSocket endpoint registration
+        Spark.webSocket("/ws", new WebSocketHandler());  // <- this line is the key
+        System.out.println("✅ WebSocket /ws registered using Spark's native support.");
+
+        // Services
         ClearService clearService = new ClearService(userDAO, gameDAO, authDAO);
-
-
-
-
-
         AuthService authService = new AuthService(userDAO, authDAO);
         UserService userService = new UserService(userDAO, authDAO);
         LogoutService logoutService = new LogoutService(authDAO);
@@ -62,12 +41,8 @@ public class Server {
         CreateGameService createGameService = new CreateGameService(gameDAO, authDAO);
         JoinGameService joinGameService = new JoinGameService(gameDAO, authDAO);
 
-        // Register your endpoints and handle exceptions here.
+        // Endpoints
         Spark.delete("/db", new ClearHandler(clearService));
-
-
-
-
         Spark.post("/user", new RegisterHandler(userService));
         Spark.post("/session", new LoginHandler(authService));
         Spark.delete("/session", new LogoutHandler(logoutService));
