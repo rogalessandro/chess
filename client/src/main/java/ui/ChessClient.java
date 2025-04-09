@@ -135,7 +135,8 @@ public class ChessClient {
                 this.currentGameID = game.gameID();
                 facade.joinGame(authToken, game.gameID(), color);
                 webSocketFacade.connect();
-                webSocketFacade.joinPlayer(game.gameID(), authToken);
+//                webSocketFacade.joinPlayer(game.gameID(), authToken, color);
+
 
                 System.out.println("Joined game: " + game.gameName() + " as " + color);
                 BoardPrinter.drawBoard(new ChessGame(), color);
@@ -163,7 +164,7 @@ public class ChessClient {
                 var game = games.get(choice);
 
                 webSocketFacade.connect();
-                webSocketFacade.joinObserver(game.gameID(), authToken);
+//                webSocketFacade.joinObserver(game.gameID(), authToken);
 
                 System.out.println("Observing game: " + game.gameName());
                 BoardPrinter.drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
@@ -188,7 +189,7 @@ public class ChessClient {
                 ChessPosition end = new ChessPosition(endRow, endCol);
                 ChessMove move = new ChessMove(start, end, null); // for now, no promotion
 
-                webSocketFacade.makeMove(currentGameID, authToken, move);
+//                webSocketFacade.makeMove(currentGameID, authToken, move);
             }
             case "resign" -> {
                 if (currentGameID == null) {
@@ -196,7 +197,7 @@ public class ChessClient {
                     return;
                 }
 
-                webSocketFacade.resign(currentGameID, authToken);
+//                webSocketFacade.resign(currentGameID, authToken);
             }
             case "leave" -> {
                 if (currentGameID == null) {
@@ -204,7 +205,7 @@ public class ChessClient {
                     return;
                 }
 
-                webSocketFacade.leave(currentGameID, authToken);
+//                webSocketFacade.leave(currentGameID, authToken);
             }
 
 

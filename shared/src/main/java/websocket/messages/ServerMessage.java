@@ -30,6 +30,10 @@ public class ServerMessage {
         NOTIFICATION
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
     public ServerMessage(ServerMessageType type) {
         this.serverMessageType = type;
     }
@@ -37,6 +41,11 @@ public class ServerMessage {
     public ServerMessageType getServerMessageType() {
         return this.serverMessageType;
     }
+
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
 
     public String getMessage() {
         return message;
