@@ -108,7 +108,7 @@ public class WebSocketHandler {
         String authToken = command.getAuthToken();
 
         var context = setupGameContext(gameID, authToken, session);
-        if (context == null) return;
+        if (context == null) {return;}
 
         try {
             GameData gameData = context.gameData;
@@ -174,7 +174,7 @@ public class WebSocketHandler {
         }
 
         var context = setupGameContext(gameID, authToken, session);
-        if (context == null) return;
+        if (context == null) {return;}
 
         try {
             context.gameDAO.removePlayer(gameID, context.username());
@@ -193,7 +193,7 @@ public class WebSocketHandler {
         String authToken = command.getAuthToken();
 
         var context = setupGameContext(gameID, authToken, session);
-        if (context == null) return;
+        if (context == null) {return;}
 
         try {
             String username = context.username();
