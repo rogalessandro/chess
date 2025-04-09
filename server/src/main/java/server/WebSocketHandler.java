@@ -192,7 +192,76 @@ public class WebSocketHandler {
     }
 
 
+    private void handleResign(UserGameCommand baseCommand, Session session) {
+        ResignCommand command = (ResignCommand) baseCommand;
+        int gameID = command.getGameID();
+        String authToken = command.getAuthToken();
 
+        try {
+            var authDAO = new MySQLAuthDAO();
+            var gameDAO = new MySQLGameDAO();
+
+            var auth = authDAO.getAuth(authToken);
+            if (auth == null) {
+                sendError(session, "Error: Invalid auth token");
+                return;
+            }
+
+            GameData gameData = gameDAO.getGame(gameID);
+            if (gameData == null) {
+                sendError(session, "Error: Game not found");
+                return;
+            }
+
+            String username = auth.username();
+            String white = gameData.whiteUsername();
+            String black = gameData.blackUsername();
+            ChessGame game = gameData.game();
+
+            if (game.isGameOver()) {
+                send(session, new LoadGameMessage(gameData));
+                return;
+            }
+
+            gameData.game().setGameOver(true);
+            gameDAO.updateGame(gameID, gameData.game());
+
+            String message = username + " resigned the game.";
+            broadcastAll(gameID, new NotificationMessage(message));
+
+        } catch (Exception e) {
+            sendError(session, "Error: " + e.getMessage());
+        }
+    }
+
+
+
+
+
+    private void handleJoinObserver(UserGameCommand command, Session session) {
+        try {
+            var authDAO = new MySQLAuthDAO();
+            var gameDAO = new MySQLGameDAO();
+
+            var auth = authDAO.getAuth(command.getAuthToken());
+            if (auth == null) {
+                sendError(session, "Error: Invalid auth token");
+                return;
+            }
+
+            GameData gameData = gameDAO.getGame(command.getGameID());
+            if (gameData == null) {
+                sendError(session, "Error: Game not found");
+                return;
+            }
+
+            joinGameSession(command.getGameID(), session);
+            send(session, new LoadGameMessage(gameData));
+
+        } catch (Exception e) {
+            sendError(session, "Error: " + e.getMessage());
+        }
+    }
 
 
 
