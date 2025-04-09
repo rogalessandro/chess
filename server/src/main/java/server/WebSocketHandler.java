@@ -35,6 +35,9 @@ public class WebSocketHandler {
 
     private static final Map<Integer, Set<Session>> GAME_SESSIONS = new ConcurrentHashMap<>();
     private final Gson gson = new Gson();
+    private record GameContext(MySQLAuthDAO authDAO, MySQLGameDAO gameDAO, GameData gameData, String username) {}
+
+
 
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
@@ -104,27 +107,15 @@ public class WebSocketHandler {
         int gameID = command.getGameID();
         String authToken = command.getAuthToken();
 
+        var context = setupGameContext(gameID, authToken, session);
+        if (context == null) return;
+
         try {
-            var authDAO = new MySQLAuthDAO();
-            var gameDAO = new MySQLGameDAO();
-
-            var auth = authDAO.getAuth(authToken);
-            if (auth == null) {
-                sendError(session, "Error: Invalid auth token");
-                return;
-            }
-
-            GameData gameData = gameDAO.getGame(gameID);
-            if (gameData == null) {
-                sendError(session, "Error: Game not found");
-                return;
-            }
-
+            GameData gameData = context.gameData;
             ChessGame game = gameData.game();
-            String username = auth.username();
+            String username = context.username();
             String whiteUsername = gameData.whiteUsername();
             String blackUsername = gameData.blackUsername();
-
 
             if (game.isGameOver()) {
                 sendError(session, "Error: Game not found");
@@ -152,8 +143,8 @@ public class WebSocketHandler {
                 return;
             }
 
-            gameDAO.updateGame(gameID, game);
-            gameData = gameDAO.getGame(gameID);
+            context.gameDAO.updateGame(gameID, game);
+            gameData = context.gameDAO.getGame(gameID); // get latest state
 
             LoadGameMessage loadGame = new LoadGameMessage(gameData);
             send(session, loadGame);
@@ -168,10 +159,12 @@ public class WebSocketHandler {
     }
 
 
+
     private void handleLeave(UserGameCommand command, Session session) {
         int gameID = command.getGameID();
         String authToken = command.getAuthToken();
 
+        // Clean up session tracking first
         Set<Session> sessions = GAME_SESSIONS.get(gameID);
         if (sessions != null) {
             sessions.remove(session);
@@ -180,26 +173,17 @@ public class WebSocketHandler {
             }
         }
 
+        var context = setupGameContext(gameID, authToken, session);
+        if (context == null) return;
+
         try {
-            var authDAO = new MySQLAuthDAO();
-            var gameDAO = new MySQLGameDAO();
-
-            var auth = authDAO.getAuth(authToken);
-            if (auth == null) {
-                sendError(session, "Error: Invalid auth token");
-                return;
-            }
-
-            String username = auth.username();
-
-            gameDAO.removePlayer(gameID, username);
-
-            broadcastAll(gameID, new NotificationMessage(username + " left the game."));
-
+            context.gameDAO.removePlayer(gameID, context.username());
+            broadcastAll(gameID, new NotificationMessage(context.username() + " left the game."));
         } catch (Exception e) {
             sendError(session, e.getMessage());
         }
     }
+
 
 
 
@@ -208,26 +192,14 @@ public class WebSocketHandler {
         int gameID = command.getGameID();
         String authToken = command.getAuthToken();
 
+        var context = setupGameContext(gameID, authToken, session);
+        if (context == null) return;
+
         try {
-            var authDAO = new MySQLAuthDAO();
-            var gameDAO = new MySQLGameDAO();
-
-            var auth = authDAO.getAuth(authToken);
-            if (auth == null) {
-                sendError(session, "Error: Invalid auth token");
-                return;
-            }
-
-            GameData gameData = gameDAO.getGame(gameID);
-            if (gameData == null) {
-                sendError(session, "Error: Game not found");
-                return;
-            }
-
-            String username = auth.username();
-            String white = gameData.whiteUsername();
-            String black = gameData.blackUsername();
-            ChessGame game = gameData.game();
+            String username = context.username();
+            String white = context.gameData.whiteUsername();
+            String black = context.gameData.blackUsername();
+            ChessGame game = context.gameData.game();
 
             if (game.isGameOver()) {
                 sendError(session, "Error: Game not found");
@@ -239,8 +211,8 @@ public class WebSocketHandler {
                 return;
             }
 
-            gameData.game().setGameOver(true);
-            gameDAO.updateGame(gameID, gameData.game());
+            game.setGameOver(true);
+            context.gameDAO.updateGame(gameID, game);
 
             String message = username + " resigned the game.";
             broadcastAll(gameID, new NotificationMessage(message));
@@ -249,6 +221,7 @@ public class WebSocketHandler {
             sendError(session, "Error: " + e.getMessage());
         }
     }
+
 
 
 
@@ -320,6 +293,31 @@ public class WebSocketHandler {
             if (!sess.equals(excluded) && sess.isOpen()) {
                 send(sess, message);
             }
+        }
+    }
+
+
+    private GameContext setupGameContext(int gameID, String authToken, Session session) {
+        try {
+            var authDAO = new MySQLAuthDAO();
+            var gameDAO = new MySQLGameDAO();
+
+            var auth = authDAO.getAuth(authToken);
+            if (auth == null) {
+                sendError(session, "Error: Invalid auth token");
+                return null;
+            }
+
+            var gameData = gameDAO.getGame(gameID);
+            if (gameData == null) {
+                sendError(session, "Error: Game not found");
+                return null;
+            }
+
+            return new GameContext(authDAO, gameDAO, gameData, auth.username());
+        } catch (Exception e) {
+            sendError(session, "Error: " + e.getMessage());
+            return null;
         }
     }
 
