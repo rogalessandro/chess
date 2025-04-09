@@ -129,7 +129,7 @@ public class WebSocketHandler {
 
 
             if (game.isGameOver()) {
-                send(session, new LoadGameMessage(gameData));
+                sendError(session, "Error: Game not found");
                 return;
             }
 
@@ -184,12 +184,25 @@ public class WebSocketHandler {
 
         try {
             var authDAO = new MySQLAuthDAO();
-            String username = authDAO.getAuth(authToken).username();
+            var gameDAO = new MySQLGameDAO();
+
+            var auth = authDAO.getAuth(authToken);
+            if (auth == null) {
+                sendError(session, "Error: Invalid auth token");
+                return;
+            }
+
+            String username = auth.username();
+
+            gameDAO.removePlayer(gameID, username);
+
             broadcastAll(gameID, new NotificationMessage(username + " left the game."));
+
         } catch (Exception e) {
             sendError(session, e.getMessage());
         }
     }
+
 
 
     private void handleResign(UserGameCommand baseCommand, Session session) {
@@ -219,7 +232,12 @@ public class WebSocketHandler {
             ChessGame game = gameData.game();
 
             if (game.isGameOver()) {
-                send(session, new LoadGameMessage(gameData));
+                sendError(session, "Error: Game not found");
+                return;
+            }
+
+            if (username.equals("observer")) {
+                sendError(session, "Error: You are not a player in this game");
                 return;
             }
 
