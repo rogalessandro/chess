@@ -32,6 +32,7 @@ public class WebSocketFacade {
         }
     }
 
+
 //    public void sendCommand(UserGameCommand command) {
 //        if (session == null || !session.isOpen()) {
 //            throw new IllegalStateException("WebSocket is not connected.");
