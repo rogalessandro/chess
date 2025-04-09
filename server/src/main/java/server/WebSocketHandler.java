@@ -36,8 +36,6 @@ public class WebSocketHandler {
     private static final Map<Integer, Set<Session>> GAME_SESSIONS = new ConcurrentHashMap<>();
     private final Gson gson = new Gson();
 
-
-
     @OnWebSocketMessage
     public void onMessage(Session session, String message) {
         try {
@@ -285,17 +283,6 @@ public class WebSocketHandler {
     private void joinGameSession(Integer gameID, Session session) {
         GAME_SESSIONS.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(session);
     }
-
-    private void removeGameSession(int gameID, Session session) {
-        Set<Session> sessions = GAME_SESSIONS.get(gameID);
-        if (sessions != null) {
-            sessions.remove(session);
-            if (sessions.isEmpty()) {
-                GAME_SESSIONS.remove(gameID);
-            }
-        }
-    }
-
 
 
     private void send(Session session, ServerMessage message) {
