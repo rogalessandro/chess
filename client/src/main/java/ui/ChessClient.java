@@ -196,7 +196,6 @@ public class ChessClient {
                     System.out.println("You must join or observe a game first.");
                     return;
                 }
-
 //                webSocketFacade.resign(currentGameID, authToken);
             }
             case "leave" -> {
@@ -204,12 +203,8 @@ public class ChessClient {
                     System.out.println("You must join or observe a game first.");
                     return;
                 }
-
 //                webSocketFacade.leave(currentGameID, authToken);
             }
-
-
-
 
             default -> System.out.println("Unknown command. Type 'help'");
         }

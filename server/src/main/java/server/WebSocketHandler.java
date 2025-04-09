@@ -1,4 +1,4 @@
-// ChessWebSocketHandler.java
+
 package websocket;
 
 import com.google.gson.Gson;
@@ -33,7 +33,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @WebSocket
 public class WebSocketHandler {
 
-    private static final Map<Integer, Set<Session>> gameSessions = new ConcurrentHashMap<>();
+    private static final Map<Integer, Set<Session>> GAME_SESSIONS = new ConcurrentHashMap<>();
     private final Gson gson = new Gson();
 
 
@@ -82,7 +82,7 @@ public class WebSocketHandler {
     private void handleConnect(UserGameCommand command, Session session) {
         int gameID = command.getGameID();
         String authToken = command.getAuthToken();
-        gameSessions.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(session);
+        GAME_SESSIONS.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(session);
 
         try {
             var gameDAO = new MySQLGameDAO();
@@ -174,11 +174,11 @@ public class WebSocketHandler {
         int gameID = command.getGameID();
         String authToken = command.getAuthToken();
 
-        Set<Session> sessions = gameSessions.get(gameID);
+        Set<Session> sessions = GAME_SESSIONS.get(gameID);
         if (sessions != null) {
             sessions.remove(session);
             if (sessions.isEmpty()) {
-                gameSessions.remove(gameID);
+                GAME_SESSIONS.remove(gameID);
             }
         }
 
@@ -282,22 +282,16 @@ public class WebSocketHandler {
     }
 
 
-
-
-
-
-
-
     private void joinGameSession(Integer gameID, Session session) {
-        gameSessions.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(session);
+        GAME_SESSIONS.computeIfAbsent(gameID, k -> ConcurrentHashMap.newKeySet()).add(session);
     }
 
     private void removeGameSession(int gameID, Session session) {
-        Set<Session> sessions = gameSessions.get(gameID);
+        Set<Session> sessions = GAME_SESSIONS.get(gameID);
         if (sessions != null) {
             sessions.remove(session);
             if (sessions.isEmpty()) {
-                gameSessions.remove(gameID);
+                GAME_SESSIONS.remove(gameID);
             }
         }
     }
@@ -320,8 +314,8 @@ public class WebSocketHandler {
     }
 
     private void broadcastAll(int gameID, ServerMessage message) {
-        Set<Session> sessions = gameSessions.get(gameID);
-        if (sessions == null) return;
+        Set<Session> sessions = GAME_SESSIONS.get(gameID);
+        if (sessions == null) {return;}
 
         for (Session sess : sessions) {
             if (sess != null && sess.isOpen()) {
@@ -332,8 +326,8 @@ public class WebSocketHandler {
 
 
     private void broadcastExcept(int gameID, Session excluded, ServerMessage message) {
-        Set<Session> sessions = gameSessions.get(gameID);
-        if (sessions == null) return;
+        Set<Session> sessions = GAME_SESSIONS.get(gameID);
+        if (sessions == null) {return;}
 
         for (Session sess : sessions) {
             if (!sess.equals(excluded) && sess.isOpen()) {
