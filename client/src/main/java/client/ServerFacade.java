@@ -68,10 +68,6 @@ public class ServerFacade {
     }
 
 
-
-
-
-
     private AuthData parseAuthData(HttpURLConnection connection) throws IOException {
         try (InputStream responseBody = connection.getInputStream()) {
             var map = gson.fromJson(new InputStreamReader(responseBody), Map.class);
