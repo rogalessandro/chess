@@ -21,8 +21,6 @@ public class WebSocketFacade {
     private int currentGameID;
     private ChessGame.TeamColor myColor;
 
-
-
     public void connect() {
         try {
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
