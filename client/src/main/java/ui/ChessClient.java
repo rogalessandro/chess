@@ -1,7 +1,10 @@
 package ui;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import client.ServerFacade;
+import client.WebSocketFacade;
 import model.GameData;
 
 import java.util.List;
@@ -11,11 +14,16 @@ public class ChessClient {
 
     private final Scanner scanner = new Scanner(System.in);
     private final ServerFacade facade;
+    private final WebSocketFacade webSocketFacade = new WebSocketFacade();
+    private final WebSocketFacade socket;
     private String authToken = null;
     private String username = null;
+    private Integer currentGameID = null;
 
-    public ChessClient(ServerFacade facade) {
+
+    public ChessClient(ServerFacade facade, WebSocketFacade socket) {
         this.facade = facade;
+        this.socket = socket;
     }
 
     public void run() {
@@ -124,7 +132,10 @@ public class ChessClient {
                     return;
                 }
 
+                this.currentGameID = game.gameID();
                 facade.joinGame(authToken, game.gameID(), color);
+                webSocketFacade.connect();
+                webSocketFacade.joinPlayer(game.gameID(), authToken);
 
                 System.out.println("Joined game: " + game.gameName() + " as " + color);
                 BoardPrinter.drawBoard(new ChessGame(), color);
@@ -151,9 +162,53 @@ public class ChessClient {
 
                 var game = games.get(choice);
 
+                webSocketFacade.connect();
+                webSocketFacade.joinObserver(game.gameID(), authToken);
+
                 System.out.println("Observing game: " + game.gameName());
                 BoardPrinter.drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
             }
+            case "move" -> {
+                if (currentGameID == null) {
+                    System.out.println("You must join or observe a game first.");
+                    return;
+                }
+
+                System.out.print("Start position (e.g., 2 1): ");
+                int startRow = scanner.nextInt();
+                int startCol = scanner.nextInt();
+                scanner.nextLine(); // consume newline
+
+                System.out.print("End position (e.g., 3 1): ");
+                int endRow = scanner.nextInt();
+                int endCol = scanner.nextInt();
+                scanner.nextLine(); // consume newline
+
+                ChessPosition start = new ChessPosition(startRow, startCol);
+                ChessPosition end = new ChessPosition(endRow, endCol);
+                ChessMove move = new ChessMove(start, end, null); // for now, no promotion
+
+                webSocketFacade.makeMove(currentGameID, authToken, move);
+            }
+            case "resign" -> {
+                if (currentGameID == null) {
+                    System.out.println("You must join or observe a game first.");
+                    return;
+                }
+
+                webSocketFacade.resign(currentGameID, authToken);
+            }
+            case "leave" -> {
+                if (currentGameID == null) {
+                    System.out.println("You must join or observe a game first.");
+                    return;
+                }
+
+                webSocketFacade.leave(currentGameID, authToken);
+            }
+
+
+
 
             default -> System.out.println("Unknown command. Type 'help'");
         }
