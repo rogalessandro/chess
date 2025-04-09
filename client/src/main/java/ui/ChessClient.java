@@ -100,75 +100,9 @@ public class ChessClient {
                 printGameList(games);
 
             }
-            case "play" -> {
-                var games = facade.listGames(authToken);
-                if (games.isEmpty()) {
-                    System.out.println("No games available.");
-                    return;
-                }
+            case "play" -> handlePlay();
 
-                System.out.println("Choose a game to join:");
-                printGameList(games);
-
-
-                System.out.print("Enter game number: ");
-                int choice = Integer.parseInt(scanner.nextLine()) - 1;
-
-                if (choice < 0 || choice >= games.size()) {
-                    System.out.println("Invalid game number.");
-                    return;
-                }
-
-                var game = games.get(choice);
-
-                System.out.print("Join as WHITE or BLACK? ");
-                String colorInput = scanner.nextLine().trim().toUpperCase();
-
-                ChessGame.TeamColor color;
-                try {
-                    color = ChessGame.TeamColor.valueOf(colorInput);
-                } catch (IllegalArgumentException e) {
-                    System.out.println("Invalid color. Choose WHITE or BLACK.");
-                    return;
-                }
-
-                this.currentGameID = game.gameID();
-                facade.joinGame(authToken, game.gameID(), color);
-                webSocketFacade.connect();
-//                webSocketFacade.joinPlayer(game.gameID(), authToken, color);
-
-
-                System.out.println("Joined game: " + game.gameName() + " as " + color);
-                BoardPrinter.drawBoard(new ChessGame(), color);
-            }
-
-            case "observe" -> {
-                var games = facade.listGames(authToken);
-                if (games.isEmpty()) {
-                    System.out.println("No games available.");
-                    return;
-                }
-
-                System.out.println("Choose a game to observe:");
-                printGameList(games);
-
-
-                System.out.print("Enter game number: ");
-                int choice = Integer.parseInt(scanner.nextLine()) - 1;
-
-                if (choice < 0 || choice >= games.size()) {
-                    System.out.println("Invalid game number.");
-                    return;
-                }
-
-                var game = games.get(choice);
-
-                webSocketFacade.connect();
-//                webSocketFacade.joinObserver(game.gameID(), authToken);
-
-                System.out.println("Observing game: " + game.gameName());
-                BoardPrinter.drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
-            }
+            case "observe" -> handleObserve();
             case "move" -> {
                 if (currentGameID == null) {
                     System.out.println("You must join or observe a game first.");
@@ -188,7 +122,6 @@ public class ChessClient {
                 ChessPosition start = new ChessPosition(startRow, startCol);
                 ChessPosition end = new ChessPosition(endRow, endCol);
                 ChessMove move = new ChessMove(start, end, null); // for now, no promotion
-
 //                webSocketFacade.makeMove(currentGameID, authToken, move);
             }
             case "resign" -> {
@@ -209,6 +142,75 @@ public class ChessClient {
             default -> System.out.println("Unknown command. Type 'help'");
         }
     }
+
+
+
+
+    private void handlePlay() throws Exception {
+        var games = facade.listGames(authToken);
+        if (games.isEmpty()) {
+            System.out.println("No games available.");
+            return;
+        }
+
+        System.out.println("Choose a game to join:");
+        printGameList(games);
+
+        System.out.print("Enter game number: ");
+        int choice = Integer.parseInt(scanner.nextLine()) - 1;
+
+        if (choice < 0 || choice >= games.size()) {
+            System.out.println("Invalid game number.");
+            return;
+        }
+
+        var game = games.get(choice);
+
+        System.out.print("Join as WHITE or BLACK? ");
+        String colorInput = scanner.nextLine().trim().toUpperCase();
+
+        ChessGame.TeamColor color;
+        try {
+            color = ChessGame.TeamColor.valueOf(colorInput);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid color. Choose WHITE or BLACK.");
+            return;
+        }
+
+        this.currentGameID = game.gameID();
+        facade.joinGame(authToken, game.gameID(), color);
+        webSocketFacade.connect();
+
+        System.out.println("Joined game: " + game.gameName() + " as " + color);
+        BoardPrinter.drawBoard(new ChessGame(), color);
+    }
+
+    private void handleObserve() throws Exception {
+        var games = facade.listGames(authToken);
+        if (games.isEmpty()) {
+            System.out.println("No games available.");
+            return;
+        }
+
+        System.out.println("Choose a game to observe:");
+        printGameList(games);
+
+        System.out.print("Enter game number: ");
+        int choice = Integer.parseInt(scanner.nextLine()) - 1;
+
+        if (choice < 0 || choice >= games.size()) {
+            System.out.println("Invalid game number.");
+            return;
+        }
+
+        var game = games.get(choice);
+
+        webSocketFacade.connect();
+
+        System.out.println("Observing game: " + game.gameName());
+        BoardPrinter.drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
+    }
+
 
     private void printGameList(List<GameData> games) {
         for (int i = 0; i < games.size(); i++) {
